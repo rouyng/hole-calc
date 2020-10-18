@@ -16,5 +16,5 @@ def calculate_hole_size(pin1: float, pin2: float, pin3: float):
 
 
 def calculate_remaining_pin(hole_dia: float, pin1: float, pin2: float, ) -> float:
-    """From two known pin sizes, calculate the required third pin diameter to gauge hole diameter"""
+    """From two pin sizes calculate the required third pin diameter to gauge hole diameter"""
     pass
