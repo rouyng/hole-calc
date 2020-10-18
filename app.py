@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-import holecalc as hc
+from holecalc import holecalc as hc
 import logging
 
 app = Flask(__name__)
@@ -11,6 +11,9 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 def home():
     return render_template('home.html')
 
+@app.route('/about.html')
+def about():
+    return render_template('about.html')
 
 @app.route('/', methods=['POST'])
 def post_results():

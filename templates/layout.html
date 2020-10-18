@@ -3,12 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="{{url_for('.static', filename='normalize.css')}}">
+    <meta name="description" content="Hole gauging calculator">
+    <link rel="stylesheet" href="/static/pure-min.css">
+    <link rel="stylesheet" href="/static/styles.css">
     <title>hole-calc</title>
 </head>
 <body>
-{% block content %}{% endblock %}
+<div id="layout">
+    <!-- Menu toggle -->
+    <a href="#menu" id="menuLink" class="menu-link">
+        <!-- Hamburger icon -->
+        <span></span>
+    </a>
+
+    <div id="menu">
+        <div class="pure-menu">
+            <a class="pure-menu-heading" href="/">hole calc</a>
+
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item"><a href="/about.html" class="pure-menu-link">About</a></li>
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+    {% block content %}{% endblock %}
+</div>
+
+<script src="/static/ui.js"></script>
+
 </body>
 </html>
-
-{#TODO: build layout based on https://purecss.io/#}
