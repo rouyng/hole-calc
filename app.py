@@ -12,6 +12,11 @@ def about():
     return render_template('about.html')
 
 
+@app.route('/guide.html')
+def guide():
+    return render_template('guide.html')
+
+
 @app.route('/')
 def home():
     placeholder_input = (None, None, None)
