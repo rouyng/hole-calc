@@ -15,7 +15,20 @@ def test_import():
         print(i)
     assert "holecalc" in sys.modules
 
+
 class TestCalculations:
-    """Tests mathmatical accuracy of formulas"""
+    """Tests mathematical accuracy of formulas"""
     def test_example_values_1(self):
-        assert holecalc.calculate_hole_size(1, 2, 3) == 6
+        assert round(holecalc.calculate_hole_size(1, 2, 3), 3) == 6
+
+    def test_example_values_2(self):
+        assert round(holecalc.calculate_hole_size(5, 2, 8), 3) == 24.375
+
+    def test_examples_values_3(self):
+        assert round(holecalc.calculate_hole_size(0.113, 0.278, 0.156), 3) == 0.440
+
+    def test_zero_input(self):
+        assert holecalc.calculate_hole_size(0, 1, 2) is None
+
+    def test_invalid_input(self):
+        assert holecalc.calculate_hole_size(50, 1, 0.01) is None
