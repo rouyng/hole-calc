@@ -48,9 +48,12 @@
                         <div class="pure-u-1 pure-u-md-2-3">
                             <h2>Result: {{ result }}</h2>
                             {#    draw SVG of results    #}
-                            <svg width="95%" height="95%">
-                                <circle cx="50%" cy="50%" r="40%" stroke="green" stroke-width="0.1em" fill="none" />
-                            </svg>
+                            <svg width="95%" height="95%" viewBox="0 0 100 100">
+                                <circle r="40%" cx="50%" cy="50%" stroke="green" stroke-width="0.05em" fill="none"></circle>
+                                {% if valid and None not in input_pins %}
+                                    <circle r="{{ pins_percent[1] }}%" cx="50%" cy="{{ pin2_ypos }}%" stroke="green" stroke-width="0.05em" fill="none"></circle>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </fieldset>

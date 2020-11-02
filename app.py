@@ -20,11 +20,16 @@ def guide():
 @app.route('/')
 def home():
     placeholder_input = (None, None, None)
-    return render_template('home.html', valid=True, input_pins=placeholder_input, result=6.0)
+    return render_template('home.html', valid=True, input_pins=placeholder_input,
+                           pins_percents=None, result="")
 
 
 @app.route('/', methods=['POST'])
 def post_results():
+    def calc_pin_percent(pin, hole):
+        radius = (round(pin / hole, 3)) * 40
+        return radius
+
     form_input_data = request.form
     try:
         pin1 = float(form_input_data['pin1'])
@@ -42,7 +47,13 @@ def post_results():
                 rounded_result = round(calc_result, round_digits)
         except ValueError:
             pass
+        print(calc_pin_percent(pin2, calc_result))
+
         return render_template('home.html', valid=True, input_pins=(pin1, pin2, pin3),
+                               pins_percent=(calc_pin_percent(pin1, calc_result),
+                                             calc_pin_percent(pin2, calc_result),
+                                             calc_pin_percent(pin3, calc_result)),
+                               pin2_ypos= 90 - calc_pin_percent(pin2, calc_result),
                                result=rounded_result)
 
 
