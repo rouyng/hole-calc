@@ -10,22 +10,26 @@ def calculate_hole_size(pin1: float, pin2: float, pin3: float):
     try:
         curvatures = [1/(d / 2) for d in (pin1, pin2, pin3)]  # determine curvatures for each pin
     except ZeroDivisionError:
-        return None
+        return {'result': None, 'error': 'Pin dimension cannot be zero'}
 
     hole_rad = 1 / (sum(curvatures) - 2 * sqrt(curvatures[0]*curvatures[1]
                                                + curvatures[1]*curvatures[2]
                                                + curvatures[0]*curvatures[2]))
     result = abs(hole_rad * 2)
     if any([result < d for d in (pin1, pin2, pin3)]):
-        return None
-    return abs(hole_rad * 2)
+        return {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
+    return {'result': abs(hole_rad * 2), 'error': None}
 
 
 def calculate_center_positions(pin1: float, pin2: float, pin3: float, hole_dia):
     """
     From three known tangent circle diameters (representing pins in a hole),
     calculate the x,y coordinates of each circle center relative to the center 0,0
-    of the circumscribing circle with diameter of hole_dia
+    of the circumscribing circle with diameter of hole_dia.
+
+    This function will eventually be used to draw the relative sizes and positions of the three
+    pins within the hole being measured. Need to figure out the geometry first before I can
+    complete it, though!
     """
     pass
 
