@@ -21,6 +21,16 @@ def calculate_hole_size(pin1: float, pin2: float, pin3: float):
     return {'result': abs(hole_rad * 2), 'error': None}
 
 
+def pin_tolerance_limits(nominal: float, tol_class: str, is_plus: bool):
+    """Return the minimum and maximum diameter of a gauge pin, given the nominal size,
+    the tolerance class of the gauge, and whether it is a plus or minus pin.
+
+    Tolerance class information from https://www.newmantools.com/meyer/pluggage_ABC.htm
+    """
+    pass
+
+
+
 def calculate_center_positions(pin1: float, pin2: float, pin3: float, hole_dia):
     """
     From three known tangent circle diameters (representing pins in a hole),
