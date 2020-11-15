@@ -10,13 +10,20 @@
         <div class="content">
             <h2 class="content-subhead">How to use this site</h2>
             <p>
-                To use this layout, you can just copy paste the HTML, along with the CSS in <a href="/layouts/side-menu/styles.css" alt="Side Menu CSS">side-menu.css</a>, and the JavaScript in <a href="/js/ui.js">ui.js</a>. The JS file uses vanilla JavaScript to simply toggle an <code>active</code> class that makes the menu responsive.
+                hole calc provides a simple calculator to determine the diameter of a hole/bore based on the size of three pin gauges (a.k.a. plug gauges or gages) that fit into it. This three-gauge method can provide a quick way to measure bore diameters when you don't have access to a GO/NOGO gauge or other precision bore measuring method. Measurements obtained via the three-gauge method should be considered approximate relative to the use of these other methods.
             </p>
 
-            <h2 class="content-subhead">A note about measuring holes...</h2>
+            <h2 class="content-subhead">Precautions</h2>
             <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                hole calc simply does the math for you- it does not substitute for an understanding of the metrology involved in measuring holes. A full overview of how to use pin gauges and measure holes is outside the scope of this guide (<a href="https://www.newmantools.com/meyer/pluggage_ABC.htm">here is a good start</a>). However, the following caveats should be kept in mind when attempting to do precision work using the three-pin method:
             </p>
+            <ul>
+                <li>Every gauge pin has a class indicating the tolerance of the pin diameter and are designated "+" or "-". The tolerance of each pin and resulting stackup will affect the measurement of the hole.</li>
+                <li>Surface roughness and material will affect how easily gauges slide into the bore, potenitally influencing gauge size choice</li>
+                <li>The three gauge method assumes the bore to be perfectly round. If the bore is oval-shaped or lobed, the three gauge method will provide inconsistent results depending on the relative position of the gauges within the bore.</li>
+
+            </ul>
+
 
         </div>
     </div>
