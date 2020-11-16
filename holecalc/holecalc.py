@@ -1,4 +1,8 @@
 from math import sqrt
+from decimal import Decimal, getcontext
+
+# set precision for decimal math
+getcontext().prec = 8
 
 
 def calculate_hole_size(pin1: float, pin2: float, pin3: float):
@@ -18,17 +22,66 @@ def calculate_hole_size(pin1: float, pin2: float, pin3: float):
     result = abs(hole_rad * 2)
     if any([result < d for d in (pin1, pin2, pin3)]):
         return {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
-    return {'result': abs(hole_rad * 2), 'error': None}
+    return {'result': result, 'error': None}
 
 
-def pin_tolerance_limits(nominal: float, tol_class: str, is_plus: bool):
-    """Return the minimum and maximum diameter of a gauge pin, given the nominal size,
+def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str = "in"):
+    """Return the minimum and maximum diameter of a gauge pin, given the nominal size in units,
     the tolerance class of the gauge, and whether it is a plus or minus pin.
 
     Tolerance class information from https://www.newmantools.com/meyer/pluggage_ABC.htm
     """
-    pass
+    # tolerance classes for gauge pins have upper and lower bounds, if nominal dimension is outside
+    # these bounds, return None
+    nominal_dia = Decimal(nominal)
+    if units not in ("in", "mm"):
+        raise ValueError(f"Invalid units specified: {units}")
+    elif tol_class not in ('XX', 'X', 'Y', 'Z', 'ZZ'):
+        raise ValueError(f"Invalid tolerance class specified: {tol_class}")
+    elif (nominal_dia < Decimal(".0009") or nominal_dia > Decimal("12.2600")) and units == "in":
+        return None
+    elif (nominal_dia < Decimal("1.00") or nominal_dia > Decimal("300.00")) and units == "mm":
+        return None
+    tol_table_in = {
+        "0.8250": {
+            'XX': Decimal("0.00002"),
+            'X': Decimal("0.000040"),
+            'Y': Decimal("0.000070"),
+            'Z': Decimal("0.000100"),
+            'ZZ': Decimal("0.000200")
+        },
+        "1.5100": {
+            'XX': Decimal("0.000030"),
+            'X': Decimal("0.000060"),
+            'Y': Decimal("0.000090"),
+            'Z': Decimal("0.000120"),
+            'ZZ': Decimal("0.000240")
+        },
 
+    }
+    tol_table_mm = {
+        "21.00": {
+            'XX': Decimal("0.0005"),
+            'X': Decimal("0.0010"),
+            'Y': Decimal("0.0018"),
+            'Z': Decimal("0.0025"),
+            'ZZ': Decimal("0.0050")}
+    }
+    if units == "in":
+        for r, t in tol_table_in.items():
+            if nominal_dia < Decimal(r):
+                tolerance = t[tol_class]
+                break
+    else:
+        for r, t in tol_table_mm.items():
+            if nominal_dia < Decimal(r):
+                tolerance = t[tol_class]
+                break
+    if is_plus:
+        tolerance_bounds = (nominal, nominal + tolerance)
+    else:
+        tolerance_bounds = (nominal - tolerance, nominal)
+    return tolerance_bounds
 
 
 def calculate_center_positions(pin1: float, pin2: float, pin3: float, hole_dia):
