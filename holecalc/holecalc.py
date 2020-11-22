@@ -31,13 +31,14 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
 
     Tolerance class information from https://www.newmantools.com/meyer/pluggage_ABC.htm
     """
-    # tolerance classes for gauge pins have upper and lower bounds, if nominal dimension is outside
-    # these bounds, return None
+
     nominal_dia = Decimal(nominal)
     if units not in ("in", "mm"):
         raise ValueError(f"Invalid units specified: {units}")
     elif tol_class not in ('XX', 'X', 'Y', 'Z', 'ZZ'):
         raise ValueError(f"Invalid tolerance class specified: {tol_class}")
+    # tolerance classes for gauge pins have upper and lower bounds, if nominal dimension is outside
+    # these bounds, return None
     elif (nominal_dia < Decimal(".0009") or nominal_dia > Decimal("12.2600")) and units == "in":
         return None
     elif (nominal_dia < Decimal("1.00") or nominal_dia > Decimal("300.00")) and units == "mm":
@@ -57,7 +58,41 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
             'Z': Decimal("0.000120"),
             'ZZ': Decimal("0.000240")
         },
-
+        "2.5100": {
+            'XX': Decimal("0.000040"),
+            'X': Decimal("0.000080"),
+            'Y': Decimal("0.000120"),
+            'Z': Decimal("0.000160"),
+            'ZZ': Decimal("0.000320")
+        },
+        "4.5100": {
+            'XX': Decimal("0.000050"),
+            'X': Decimal("0.000100"),
+            'Y': Decimal("0.000150"),
+            'Z': Decimal("0.000200"),
+            'ZZ': Decimal("0.000400")
+        },
+        "6.5100": {
+            'XX': Decimal("0.000065"),
+            'X': Decimal("0.000130"),
+            'Y': Decimal("0.000190"),
+            'Z': Decimal("0.000250"),
+            'ZZ': Decimal("0.000500")
+        },
+        "9.0100": {
+            'XX': Decimal("0.000080"),
+            'X': Decimal("0.000160"),
+            'Y': Decimal("0.000240"),
+            'Z': Decimal("0.000320"),
+            'ZZ': Decimal("0.000640")
+        },
+        "12.2600": {
+            'XX': Decimal("0.000100"),
+            'X': Decimal("0.000200"),
+            'Y': Decimal("0.000300"),
+            'Z': Decimal("0.000400"),
+            'ZZ': Decimal("0.000800")
+        }
     }
     tol_table_mm = {
         "21.00": {
@@ -65,7 +100,50 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
             'X': Decimal("0.0010"),
             'Y': Decimal("0.0018"),
             'Z': Decimal("0.0025"),
-            'ZZ': Decimal("0.0050")}
+            'ZZ': Decimal("0.0050")
+        },
+        "38.00": {
+            'XX': Decimal("0.0008"),
+            'X': Decimal("0.0015"),
+            'Y': Decimal("0.0023"),
+            'Z': Decimal("0.0030"),
+            'ZZ': Decimal("0.0060")
+        },
+        "64.00": {
+            'XX': Decimal("0.0010"),
+            'X': Decimal("0.0020"),
+            'Y': Decimal("0.0030"),
+            'Z': Decimal("0.0040"),
+            'ZZ': Decimal("0.0080")
+        },
+        "115.00": {
+            'XX': Decimal("0.0013"),
+            'X': Decimal("0.0025"),
+            'Y': Decimal("0.0038"),
+            'Z': Decimal("0.0050"),
+            'ZZ': Decimal("0.0100")
+        },
+        "165.00": {
+            'XX': Decimal("0.0017"),
+            'X': Decimal("0.0033"),
+            'Y': Decimal("0.0048"),
+            'Z': Decimal("0.0060"),
+            'ZZ': Decimal("0.0130")
+        },
+        "230.00": {
+            'XX': Decimal("0.0020"),
+            'X': Decimal("0.0041"),
+            'Y': Decimal("0.0061"),
+            'Z': Decimal("0.0080"),
+            'ZZ': Decimal("0.0160")
+        },
+        "300.00": {
+            'XX': Decimal("0.0025"),
+            'X': Decimal("0.0051"),
+            'Y': Decimal("0.0076"),
+            'Z': Decimal("0.0100"),
+            'ZZ': Decimal("0.0200")
+        }
     }
     if units == "in":
         for r, t in tol_table_in.items():
