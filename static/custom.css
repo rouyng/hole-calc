@@ -1,0 +1,11 @@
+/* Custom styles to extend purecss for hole-calc*/
+
+.button-calculate {
+    /* Button for calculation actions */
+    background: rgb(28, 184, 65);
+}
+
+.button-error {
+    /* Button for calculation actions */
+    background: rgb(202, 60, 60);
+}

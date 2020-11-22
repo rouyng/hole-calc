@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from holecalc import holecalc as hc
+from decimal import Decimal, InvalidOperation
 import logging
 
 app = Flask(__name__)
@@ -20,26 +21,31 @@ def guide():
 @app.route('/')
 def home():
     placeholder_input = (None, None, None)
-    return render_template('3hole.html', valid=True, input_pins=placeholder_input,
-                           pins_percents=None, result="")
+    return render_template('3hole.html',
+                           valid=True,
+                           input_pins=placeholder_input,
+                           units="IN",
+                           precision="0.001", result="")
 
 
 @app.route('/', methods=['POST'])
 def post_results():
     form_input_data = request.form
+    form_units = form_input_data['units']
+    precision = form_input_data['precision']
+    rounded_result = None
     try:
-        pin1 = float(form_input_data['pin1'])
-        pin2 = float(form_input_data['pin2'])
-        pin3 = float(form_input_data['pin3'])
+        pin1 = Decimal(form_input_data['pin1'])
+        pin2 = Decimal(form_input_data['pin2'])
+        pin3 = Decimal(form_input_data['pin3'])
         input_validated = True
-    except ValueError:
+    except InvalidOperation:
+        pin1, pin2, pin3 = None, None, None
         input_validated = False
-        return render_template('3hole.html', valid=input_validated)
     else:
         calc_result = hc.calculate_hole_size(pin1, pin2, pin3)
         try:
-            rounded_result = round(calc_result['result'], 3)
-            precision = form_input_data['precision']
+            rounded_result = calc_result['result'].quantize(Decimal(form_input_data['precision']))
             round_digits = len(precision) - 2
             format_string = "{"+f":.{round_digits}f"+"}"
             if 1 < len(precision) < 5:
@@ -48,10 +54,12 @@ def post_results():
             input_validated = False
             rounded_result = f"{calc_result['error']}"
 
-        return render_template('3hole.html',
-                               valid=input_validated,
-                               input_pins=(pin1, pin2, pin3),
-                               result=rounded_result)
+    return render_template('3hole.html',
+                           valid=input_validated,
+                           input_pins=(pin1, pin2, pin3),
+                           precision=precision,
+                           units=form_units,
+                           result=rounded_result)
 
 
 if __name__ == '__main__':
