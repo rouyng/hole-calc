@@ -10,7 +10,7 @@ from decimal import Decimal, getcontext
 import pytest
 import random
 import sys
-getcontext().prec = 8
+
 
 def test_import():
     """Test whether module to be tested was successfully imported"""
@@ -20,7 +20,7 @@ def test_import():
 
 
 class TestCalculations:
-    """Tests mathematical accuracy of formulas"""
+    """Unit test the math functions"""
     def test_example_values_1(self):
         test_result = holecalc.calculate_hole_size("1", "2", "3")['result']
         assert str(test_result.quantize(Decimal("0.001"))) == "6.000"
@@ -99,6 +99,12 @@ class TestCalculations:
             holecalc.pin_tolerance_limits(test_dia, "X", True, units="garbage")
             assert "Invalid units" in str(execinfo)
 
+    def test_invalid_tolerance_class(self):
+        test_dia = str(round(random.uniform(0.0009, 12.26), 4))
+        with pytest.raises(ValueError) as execinfo:
+            holecalc.pin_tolerance_limits(test_dia, "YX", True, units="in")
+            assert "Invalid tolerance class" in str(execinfo)
+
     def test_in_tolerance_bounds(self):
         test_dia = str(round(random.uniform(0.00005, 0.0008), 4))
         assert holecalc.pin_tolerance_limits(test_dia, "X", True, units="in") is None
@@ -107,3 +113,32 @@ class TestCalculations:
         test_dia = str(round(random.uniform(0.00005, 0.9999), 4))
         assert holecalc.pin_tolerance_limits(test_dia, "X", True, units="mm") is None
 
+    def test_tolerance_hole_measurement_in(self):
+        results = holecalc.calculate_hole_size_limits(
+            ("1.000", "ZZ", True),
+            ("2.000", "ZZ", True),
+            ("3.000", "ZZ", True), "in")
+        assert results[0]['error'] is None
+        assert results[0]['error'] is None
+        assert str(results[0]['result'].quantize(Decimal("0.0001"))) == "6.0000"
+        assert str(results[1]['result'].quantize(Decimal("0.0001"))) == "6.0003"
+
+    def test_tolerance_hole_measurement_mm(self):
+        results = holecalc.calculate_hole_size_limits(
+            ("1.00", "ZZ", True),
+            ("2.00", "ZZ", True),
+            ("3.00", "ZZ", True), "mm")
+        assert results[0]['error'] is None
+        assert results[0]['error'] is None
+        assert str(results[0]['result'].quantize(Decimal("0.01"))) == "6.00"
+        assert str(results[1]['result'].quantize(Decimal("0.01"))) == "6.00"
+
+    def test_tolerance_hole_measurement_mm_2(self):
+        results = holecalc.calculate_hole_size_limits(
+            ("64.25", "Y", True),
+            ("11.10", "Z", True),
+            ("25.35", "ZZ", True), "mm")
+        assert results[0]['error'] is None
+        assert results[0]['error'] is None
+        assert str(results[0]['result'].quantize(Decimal("0.001"))) == "240.219"
+        assert str(results[1]['result'].quantize(Decimal("0.001"))) == "240.174"

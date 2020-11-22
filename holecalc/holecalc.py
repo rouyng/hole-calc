@@ -1,10 +1,13 @@
-from math import sqrt
 from decimal import Decimal, getcontext
+import logging
+
 
 # set precision for decimal math
-getcontext().prec = 8
+getcontext().prec = 12
 # set rounding method for decimal math
 getcontext().rounding = "ROUND_HALF_UP"
+# set logging level
+logging.getLogger().setLevel(logging.INFO)
 
 
 def calculate_hole_size(pin1: str, pin2: str, pin3: str):
@@ -12,15 +15,20 @@ def calculate_hole_size(pin1: str, pin2: str, pin3: str):
 
     This is an application of Descartes' Theorem, which states that for every four
     mutually tangent circles, the radii of the circles satisfy a certain quadratic equation
+    :param pin1: String representing decimal size of first pin, ex: "1.000"
+    :param pin2: String representing decimal size of first pin, ex: "2.000"
+    :param pin3: String representing decimal size of first pin, ex: "3.000"
+    :returns: Dictionary containing "result" and "error" entries. result contains a Decimal
+    object or none if an error occurs, Error contains descriptive math error text (if applicable)
     """
     try:
-        curvatures = [1/(Decimal(d) / 2) for d in (pin1, pin2, pin3)]  # determine curvatures for each pin
+        curvatures = [1/(Decimal(d) / 2) for d in (pin1, pin2, pin3)]  # determine curvatures
     except ZeroDivisionError:
         return {'result': None, 'error': 'Pin dimension cannot be zero'}
 
     hole_rad = 1 / (sum(curvatures) - 2 * (curvatures[0]*curvatures[1]
-                                               + curvatures[1]*curvatures[2]
-                                               + curvatures[0]*curvatures[2]).sqrt())
+                                           + curvatures[1]*curvatures[2]
+                                           + curvatures[0]*curvatures[2]).sqrt())
     result = abs(hole_rad * 2)
     if any([result < Decimal(d) for d in (pin1, pin2, pin3)]):
         return {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
@@ -162,6 +170,28 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
     else:
         tolerance_bounds = (nominal_dia - tolerance, nominal_dia)
     return tolerance_bounds
+
+
+def calculate_hole_size_limits(pin1: tuple, pin2: tuple, pin3: tuple, units: str):
+    """
+    Given nominal size and tolerance class of each pin, calculate the upper and lower limits
+    of the measured hole.
+    :param pin1: Tuple containing nominal size, tolerance class, and boolean for plus
+    tolerance of pin1
+    :param pin2: Same info for pin2
+    :param pin3: Same info for pin2
+    :param units: Str containing "in" or "mm", designating the units of measurement
+    :return: Decimal minimum and maximum values of the hole measured by pins 1-3
+    """
+    pin1_limits = pin_tolerance_limits(pin1[0], pin1[1], pin1[2], units)
+    logging.debug(f"Pin 1 limits: min: {pin1_limits[0]}, max: {pin1_limits[1]}")
+    pin2_limits = pin_tolerance_limits(pin2[0], pin2[1], pin2[2], units)
+    logging.debug(f"Pin 2 limits: min: {pin2_limits[0]}, max: {pin2_limits[1]}")
+    pin3_limits = pin_tolerance_limits(pin3[0], pin3[1], pin3[2], units)
+    logging.debug(f"Pin 3 limits: min: {pin3_limits[0]}, max: {pin3_limits[1]}")
+    min_hole = calculate_hole_size(pin1_limits[0], pin2_limits[0], pin3_limits[0])
+    max_hole = calculate_hole_size(pin1_limits[1], pin2_limits[1], pin3_limits[1])
+    return min_hole, max_hole
 
 
 def calculate_center_positions(pin1: float, pin2: float, pin3: float, hole_dia):
