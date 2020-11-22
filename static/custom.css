@@ -9,3 +9,7 @@
     /* Button for calculation actions */
     background: rgb(202, 60, 60);
 }
+
+.tol-params {
+    visibility: hidden;
+}
