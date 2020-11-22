@@ -3,24 +3,26 @@ from decimal import Decimal, getcontext
 
 # set precision for decimal math
 getcontext().prec = 8
+# set rounding method for decimal math
+getcontext().rounding = "ROUND_HALF_UP"
 
 
-def calculate_hole_size(pin1: float, pin2: float, pin3: float):
+def calculate_hole_size(pin1: str, pin2: str, pin3: str):
     """From three known pin diameters, calculate diameter of hole they fit into
 
     This is an application of Descartes' Theorem, which states that for every four
     mutually tangent circles, the radii of the circles satisfy a certain quadratic equation
     """
     try:
-        curvatures = [1/(d / 2) for d in (pin1, pin2, pin3)]  # determine curvatures for each pin
+        curvatures = [1/(Decimal(d) / 2) for d in (pin1, pin2, pin3)]  # determine curvatures for each pin
     except ZeroDivisionError:
         return {'result': None, 'error': 'Pin dimension cannot be zero'}
 
-    hole_rad = 1 / (sum(curvatures) - 2 * sqrt(curvatures[0]*curvatures[1]
+    hole_rad = 1 / (sum(curvatures) - 2 * (curvatures[0]*curvatures[1]
                                                + curvatures[1]*curvatures[2]
-                                               + curvatures[0]*curvatures[2]))
+                                               + curvatures[0]*curvatures[2]).sqrt())
     result = abs(hole_rad * 2)
-    if any([result < d for d in (pin1, pin2, pin3)]):
+    if any([result < Decimal(d) for d in (pin1, pin2, pin3)]):
         return {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
     return {'result': result, 'error': None}
 
@@ -147,18 +149,18 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
     }
     if units == "in":
         for r, t in tol_table_in.items():
-            if nominal_dia < Decimal(r):
+            if nominal_dia <= Decimal(r):
                 tolerance = t[tol_class]
                 break
     else:
         for r, t in tol_table_mm.items():
-            if nominal_dia < Decimal(r):
+            if nominal_dia <= Decimal(r):
                 tolerance = t[tol_class]
                 break
     if is_plus:
-        tolerance_bounds = (nominal, nominal + tolerance)
+        tolerance_bounds = (nominal_dia, nominal_dia + tolerance)
     else:
-        tolerance_bounds = (nominal - tolerance, nominal)
+        tolerance_bounds = (nominal_dia - tolerance, nominal_dia)
     return tolerance_bounds
 
 
@@ -172,9 +174,11 @@ def calculate_center_positions(pin1: float, pin2: float, pin3: float, hole_dia):
     pins within the hole being measured. Need to figure out the geometry first before I can
     complete it, though!
     """
+    # placeholder for planned functionality
     pass
 
 
 def calculate_remaining_pin(hole_dia: float, pin1: float, pin2: float, ) -> float:
     """From two pin sizes calculate the required third pin diameter to gauge hole diameter"""
+    # placeholder for planned functionality
     pass
