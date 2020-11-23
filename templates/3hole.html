@@ -21,11 +21,13 @@
                                 <div class="pure-u-2-3">
                                     <div class="pure-u-1-3">
                                         <label for="nominal-radio" class="pure-radio">
-                                        <input type="radio" id="nom" name="tolRadios" value="nominal" onclick="toggleTol()" checked> Nominal</label>
+                                            <input type="radio" id="nom" name="tolRadios" value="nominal"
+                                                   onclick="toggleTol()" checked> Nominal</label>
                                     </div>
                                     <div class="pure-u-1-3">
                                         <label for="tol-radio" class="pure-radio">
-                                        <input type="radio" id="tol" name="tolRadios" value="toleranced" onclick="toggleTol()"/> Tolerance</label>
+                                            <input type="radio" id="tol" name="tolRadios" value="toleranced"
+                                                   onclick="toggleTol()"/> Tolerance</label>
                                     </div>
                                 </div>
                                 <div class="pure-u-7-8">
@@ -38,10 +40,11 @@
                                     <div class="pure-u-1-4 tol-params">
                                         <label for="pin-1-class">Class</label>
                                         <select id="pin-1-class" class="pure-input-1" name="pin-1-class">
-                                            <option {% if precision == "0.1" %}selected{% endif %} >0.1</option>
-                                            <option {% if precision == "0.01" %}selected{% endif %}>0.01</option>
-                                            <option {% if precision == "0.001" %}selected{% endif %}>0.001</option>
-                                            <option {% if precision == "0.0001" %}selected{% endif %}>0.0001</option>
+                                            <option {% if c1 == "XX" %}selected{% endif %}>XX</option>
+                                            <option {% if c1 == "X" %}selected{% endif %}>X</option>
+                                            <option {% if c1 == "Y" %}selected{% endif %}>Y</option>
+                                            <option {% if c1 == "Z" %}selected{% endif %}>Z</option>
+                                            <option {% if c1 == "ZZ" %}selected{% endif %}>ZZ</option>
                                         </select>
                                     </div>
                                     <div class="pure-u-1-4 tol-params">
@@ -53,16 +56,54 @@
                                     </div>
                                 </div>
                                 <div class="pure-u-7-8">
-                                    <label for="pin-2">Pin 2</label>
-                                    <input type="number" step="0.0001" min="0" id="pin-2" name="pin2"
-                                           class="pure-u-23-24"
-                                           required="" value="{{ input_pins[1] }}"/>
+                                    <div class="pure-u-3-8">
+                                        <label for="pin-2">Pin 2</label>
+                                        <input type="number" step="0.0001" min="0" id="pin-2" name="pin2"
+                                               class="pure-input-1"
+                                               required="" value="{{ input_pins[0] }}"/>
+                                    </div>
+                                    <div class="pure-u-1-4 tol-params">
+                                        <label for="pin-2-class">Class</label>
+                                        <select id="pin-2-class" class="pure-input-1" name="pin-2-class">
+                                            <option {% if c2 == "XX" %}selected{% endif %}>XX</option>
+                                            <option {% if c2 == "X" %}selected{% endif %}>X</option>
+                                            <option {% if c2 == "Y" %}selected{% endif %}>Y</option>
+                                            <option {% if c2 == "Z" %}selected{% endif %}>Z</option>
+                                            <option {% if c2 == "ZZ" %}selected{% endif %}>ZZ</option>
+                                        </select>
+                                    </div>
+                                    <div class="pure-u-1-4 tol-params">
+                                        <label for="pin-2-plus">+/-</label>
+                                        <select id="pin-2-plus" class="pure-input-1" name="pin-2-plus">
+                                            <option {% if precision == "0.1" %}selected{% endif %}>+</option>
+                                            <option {% if precision == "0.01" %}selected{% endif %}>-</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="pure-u-7-8">
-                                    <label for="pin-3">Pin 3</label>
-                                    <input type="number" step="0.0001" min="0" id="pin-3" name="pin3"
-                                           class="pure-u-23-24"
-                                           required="" value="{{ input_pins[2] }}"/>
+                                    <div class="pure-u-3-8">
+                                        <label for="pin-3">Pin 3</label>
+                                        <input type="number" step="0.0001" min="0" id="pin-3" name="pin3"
+                                               class="pure-input-1"
+                                               required="" value="{{ input_pins[2] }}"/>
+                                    </div>
+                                    <div class="pure-u-1-4 tol-params">
+                                        <label for="pin-3-class">Class</label>
+                                        <select id="pin-3-class" class="pure-input-1" name="pin-3-class">
+                                            <option {% if c3 == "XX" %}selected{% endif %}>XX</option>
+                                            <option {% if c3 == "X" %}selected{% endif %}>X</option>
+                                            <option {% if c3 == "Y" %}selected{% endif %}>Y</option>
+                                            <option {% if c3 == "Z" %}selected{% endif %}>Z</option>
+                                            <option {% if c3 == "ZZ" %}selected{% endif %}>ZZ</option>
+                                        </select>
+                                    </div>
+                                    <div class="pure-u-1-4 tol-params">
+                                        <label for="pin-3-plus">+/-</label>
+                                        <select id="pin-3-plus" class="pure-input-1" name="pin-3-plus">
+                                            <option {% if precision == "0.1" %}selected{% endif %}>+</option>
+                                            <option {% if precision == "0.01" %}selected{% endif %}>-</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="pure-u-1">
                                     <label for="units">Units</label>
@@ -72,16 +113,18 @@
                                     </select>
                                 </div>
                                 <div class="pure-u-1">
-                                    <label for="precision">Precision</label>
+                                    <label for="precision">Result Precision</label>
                                     <select id="precision" class="pure-input-1-2" name="precision">
-                                        <option {% if precision == "0.1" %}selected{% endif %} >0.1</option>
+                                        <option {% if precision == "0.1" %}selected{% endif %}>0.1</option>
                                         <option {% if precision == "0.01" %}selected{% endif %}>0.01</option>
                                         <option {% if precision == "0.001" %}selected{% endif %}>0.001</option>
                                         <option {% if precision == "0.0001" %}selected{% endif %}>0.0001</option>
                                     </select>
                                 </div>
                                 <div class="pure-u-1">
-                                    <button type="submit" class="pure-button pure-button-primary button-calculate">Calculate</button>
+                                    <button type="submit" class="pure-button pure-button-primary button-calculate">
+                                        Calculate
+                                    </button>
                                     <button type="reset" class="pure-button pure-button-primary">Clear</button>
                                 </div>
                             </div>
