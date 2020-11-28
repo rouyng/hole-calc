@@ -55,7 +55,8 @@ class ThreeHoleForm(FlaskForm):
         choices=[
             ('nom', 'Nominal'),
             ('tol', 'Class')
-        ]
+        ],
+        default='nom'
     )
     pin1 = PinSizeDecimal(1)
     pin2 = PinSizeDecimal(2)

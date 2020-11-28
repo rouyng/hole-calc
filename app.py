@@ -34,7 +34,7 @@ def home_calc():
             return render_template(
                 '3hole.html',
                 form=form,
-                error='Validation failed'
+                error='Form validation failed'
             )
         form_units = form.units.data
         precision = form.precision.data
