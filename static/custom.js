@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
 function toggleTol () {
     let tolDivs = document.getElementsByClassName("tol-params")
     for (let f of tolDivs) {
-            if (document.getElementById("tol").checked) {
+            if (document.getElementById("tol_radio-1").checked) {
                 f.style.visibility = "visible";
             } else {
                 f.style.visibility = "hidden";

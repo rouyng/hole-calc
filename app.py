@@ -2,8 +2,16 @@ from flask import Flask, render_template, request
 from holecalc import holecalc as hc
 from decimal import Decimal, InvalidOperation
 import logging
+from forms import ThreeHoleForm
+from flask_wtf.csrf import CSRFProtect
+import os
+from config import Config
 
 app = Flask(__name__)
+# import config settings (key) from config.py module
+app.config.from_object(Config)
+# set CSRF protection globally on app
+csrf = CSRFProtect(app)
 # Set logging level to show INFO-level or higher
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -20,38 +28,56 @@ def guide():
 
 @app.route('/', methods=('GET', 'POST'))
 def home_calc():
+    form = ThreeHoleForm()
     if request.method == 'POST':
-        form_input_data = request.form
-        form_units = form_input_data['units']
-        precision = form_input_data['precision']
+        if not form.validate_on_submit():
+            return render_template(
+                '3hole.html',
+                form=form,
+                error='Validation failed'
+            )
+        form_units = form.units.data
+        precision = form.precision.data
+        pin1 = form.pin1.data
+        pin1_class = form.pin1_class.data
+        pin2_is_pos = form.pin1_sign.data == '+'
+        pin2 = form.pin2.data
+        pin2_class = form.pin2_class.data
+        pin3_is_pos = form.pin2_sign.data == '+'
+        pin3 = form.pin3.data
+        pin3_class = form.pin3_class.data
+        pin1_is_pos = form.pin3_sign.data == '+'
         rounded_result = None
-        try:
-            pin1 = Decimal(form_input_data['pin1'])
-            pin2 = Decimal(form_input_data['pin2'])
-            pin3 = Decimal(form_input_data['pin3'])
-            input_validated = True
-        except InvalidOperation:
-            pin1, pin2, pin3 = None, None, None
-            input_validated = False
-        else:
+        calc_error = None
+        tol_type = form.tol_radio.data
+        if tol_type == 'nom':
             calc_result = hc.calculate_hole_size(pin1, pin2, pin3)
             try:
-                rounded_result = calc_result['result'].quantize(Decimal(form_input_data['precision']))
-            except (TypeError, ValueError):
-                input_validated = False
-                rounded_result = f"{calc_result['error']}"
+                rounded_result = calc_result['result'].quantize(Decimal(precision))
+            except (TypeError, ValueError) as e:
+                calc_error = e
+        else:
+            try:
+                calc_result = hc.calculate_hole_size_limits(
+                    (pin1, pin1_class, pin1_is_pos),
+                    (pin2, pin2_class, pin2_is_pos),
+                    (pin3, pin3_class, pin3_is_pos),
+                    units=form_units
+                )
+                for r in calc_result:
+                    if r['error'] is not None:
+                        raise ValueError(r['error'])
+                rounded_result = str(calc_result[0]['result'].quantize(Decimal(precision)))\
+                    + ' - ' + str(calc_result[1]['result'].quantize(Decimal(precision)))
+            except (TypeError, ValueError) as e:
+                calc_error = e
     else:
-        form_units = 'IN'
-        pin1, pin2, pin3 = None, None, None
-        input_validated = True
-        precision = "0.001"
+        calc_error = None
         rounded_result = None
 
     return render_template('3hole.html',
-                           valid=input_validated,
-                           input_pins=(pin1, pin2, pin3),
-                           precision=precision,
-                           units=form_units,
+                           form=form,
+                           error=calc_error,
                            result=rounded_result)
 
 
