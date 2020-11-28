@@ -30,7 +30,17 @@ def test_heartbeat(flask_app, client):
 
 def test_index(flask_app, client):
     response = client.get('/')
-    assert b'A bore measurement calculator for machinists' in response.data
+    assert response.status_code == 200
+
+
+def test_about(flask_app, client):
+    response = client.get('/about.html')
+    assert response.status_code == 200
+
+
+def test_guide(flask_app, client):
+    response = client.get('/guide.html')
+    assert response.status_code == 200
 
 
 def test_calculation(flask_app, client):
