@@ -13,3 +13,7 @@
 .tol-params {
     visibility: hidden;
 }
+
+.result-error {
+    color: rgb(202, 60, 60)
+}
