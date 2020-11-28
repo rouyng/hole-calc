@@ -53,6 +53,8 @@ def home_calc():
         if tol_type == 'nom':
             calc_result = hc.calculate_hole_size(pin1, pin2, pin3)
             try:
+                if calc_result['error'] is not None:
+                    raise ValueError(calc_result['error'])
                 rounded_result = calc_result['result'].quantize(Decimal(precision))
             except (TypeError, ValueError) as e:
                 calc_error = e
