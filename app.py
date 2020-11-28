@@ -5,15 +5,21 @@ import logging
 from forms import ThreeHoleForm
 from flask_wtf.csrf import CSRFProtect
 import os
-from config import Config
+from config import DevConfig
 
 app = Flask(__name__)
 # import config settings (key) from config.py module
-app.config.from_object(Config)
+app.config.from_object(DevConfig)
 # set CSRF protection globally on app
 csrf = CSRFProtect(app)
 # Set logging level to show INFO-level or higher
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+
+@app.route('/heartbeat')
+def heartbeat():
+    """return an OK message for simple testing of app deployment"""
+    return "OK"
 
 
 @app.route('/about.html')
