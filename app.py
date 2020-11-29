@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, flash
 from holecalc import holecalc as hc
 from decimal import Decimal, InvalidOperation
 import logging
@@ -37,10 +37,11 @@ def home_calc():
     form = ThreeHoleForm()
     if request.method == 'POST':
         if not form.validate_on_submit():
+            flash('Form validation failed')
             return render_template(
                 '3hole.html',
                 form=form,
-                error='Form validation failed'
+                error=True
             )
         form_units = form.units.data
         precision = form.precision.data
@@ -54,16 +55,17 @@ def home_calc():
         pin3_class = form.pin3_class.data
         pin1_is_pos = form.pin3_sign.data == '+'
         rounded_result = None
-        calc_error = None
+        calc_error = False
         tol_type = form.tol_radio.data
         if tol_type == 'nom':
             calc_result = hc.calculate_hole_size(pin1, pin2, pin3)
             try:
                 if calc_result['error'] is not None:
                     raise ValueError(calc_result['error'])
-                rounded_result = calc_result['result'].quantize(Decimal(precision))
+                flash('Diameter:' + str(calc_result['result'].quantize(Decimal(precision))))
             except (TypeError, ValueError) as e:
-                calc_error = e
+                calc_error = True
+                flash(str(e))
         else:
             try:
                 calc_result = hc.calculate_hole_size_limits(
@@ -75,12 +77,15 @@ def home_calc():
                 for r in calc_result:
                     if r['error'] is not None:
                         raise ValueError(r['error'])
-                rounded_result = str(calc_result[0]['result'].quantize(Decimal(precision)))\
-                    + ' - ' + str(calc_result[1]['result'].quantize(Decimal(precision)))
+                result_values = (calc_result[0]['result'].quantize(Decimal(precision)),
+                                 calc_result[1]['result'].quantize(Decimal(precision)))
+                flash('Min diameter:' + str(min(result_values)))
+                flash('Max diameter:' + str(max(result_values)))
             except (TypeError, ValueError) as e:
-                calc_error = e
+                calc_error = True
+                flash(str(e))
     else:
-        calc_error = None
+        calc_error = False
         rounded_result = None
 
     return render_template('3hole.html',

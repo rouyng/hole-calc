@@ -18,56 +18,44 @@
                     <form class="pure-form pure-form-aligned" method="post">
                         {{ form.csrf_token }}
                         <fieldset>
-                        <div class="pure-g">
-                                <div class="pure-u-1">
-                                    {# Form nominal radio buttons #}
-                                    <br>
-                                    {% for subfield in form.tol_radio %}
+                            <div class="pure-u-1">
+                                {# Form nominal radio buttons #}
+                                <br>
+                                {% for subfield in form.tol_radio %}
                                     <div class="pure-u-1-3" onclick="toggleTol()">
                                         {{ subfield.label }} {{ subfield }}
                                     </div>
-                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                            <div class="pure-g">
+                                <div class="pure-u-7-8">
+                                    {# Pin 1 size #}
+                                    {{ form.pin1.label }}
+                                    {{ form.pin1(class="pure-input-1-4") }}
+                                    {# Pin 1 tolerance class #}
+                                    {{ form.pin1_class(class="pure-input-5-24") }}
+                                    {# Pin 1 tolerance sign #}
+                                    {{ form.pin1_sign(class="pure-input-5-24") }}
                                 </div>
-                                    <div class="pure-u-3-8">
-                                        {# Pin 1 size #}
-                                        {{ form.pin1.label }}
-                                        {{ form.pin1(class="pure-input-2-3") }}
-                                    </div>
-                                    <div class="pure-u-1-4 tol-params">
-                                        {# Pin 1 tolerance class #}
-                                        {{ form.pin1_class(class="pure-input-1") }}
-                                    </div>
-                                    <div class="pure-u-1-4 tol-params">
-                                        {# Pin 1 tolerance sign #}
-                                        {{ form.pin1_sign(class="pure-input-1") }}
-                                    </div>
-                                    <div class="pure-u-3-8">
-                                        {# Pin 2 size #}
-                                        {{ form.pin2.label }}
-                                        {{ form.pin2(class="pure-input-2-3") }}
-                                    </div>
-                                    <div class="pure-u-1-4 tol-params">
-                                        {# Pin 2 tolerance class #}
-                                        {{ form.pin2_class(class="pure-input-1") }}
-                                    </div>
-                                    <div class="pure-u-1-4 tol-params">
-                                        {# Pin 2 tolerance sign #}
-                                        {{ form.pin2_sign(class="pure-input-1") }}
-                                    </div>
-                                    <div class="pure-u-3-8">
-                                        {# Pin 3 size #}
-                                        {{ form.pin3.label }}
-                                        {{ form.pin3(class="pure-input-2-3") }}
-                                    </div>
-                                    <div class="pure-u-1-4 tol-params">
-                                        {# Pin 3 tolerance class #}
-                                        {{ form.pin3_class(class="pure-input-1") }}
-                                    </div>
-                                    <div class="pure-u-1-4 tol-params">
-                                        {# Pin 3 tolerance sign #}
-                                        {{ form.pin3_sign(class="pure-input-1") }}
-                                    </div>
-                                <div class="pure-u-1 pure-u-md-1">
+                                <div class="pure-u-7-8">
+                                    {# Pin 2 size #}
+                                    {{ form.pin2.label }}
+                                    {{ form.pin2(class="pure-input-1-4") }}
+                                    {# Pin 2 tolerance class #}
+                                    {{ form.pin2_class(class="pure-input-5-24") }}
+                                    {# Pin 2 tolerance sign #}
+                                    {{ form.pin2_sign(class="pure-input-5-24") }}
+                                </div>
+                                <div class="pure-u-7-8">
+                                    {# Pin 3 size #}
+                                    {{ form.pin3.label }}
+                                    {{ form.pin3(class="pure-input-1-4") }}
+                                    {# Pin 3 tolerance class #}
+                                    {{ form.pin3_class(class="pure-input-5-24") }}
+                                    {# Pin 1 tolerance sign #}
+                                    {{ form.pin3_sign(class="pure-input-5-24") }}
+                                </div>
+                                <div class="pure-u-1 pure-u-md-7-8">
                                     {# Form units #}
                                     {{ form.units.label }}
                                     {{ form.units(class="pure-input-1 pure-input-1-4") }}
@@ -75,26 +63,42 @@
                                     {{ form.precision.label }}
                                     {{ form.precision(class="pure-input-1 pure-input-1-4") }}
                                 </div>
-                                <div class="pure-u-1">
-                                    {# Form calculate button #}
-                                    {{ form.calculate(class="pure-input-1") }}
-                                    {# Form clear/reset button #}
-                                </div>
-                        </div>
+
+                            </div>
+                            <div class="pure-u-7-8">
+                                {# Form calculate button #}
+                                {{ form.calculate(class="pure-input-1") }}
+                                {# Form clear/reset button #}
+                            </div>
                         </fieldset>
                     </form>
                 </div>
                 <div class="pure-u-1 pure-u-md-1-2">
-                    <div class="pure-u-1">
-                        {% if error != None %}
-                            <h2 class="result-error">Error:</h2>
-                            <p>{{ error }}</p>
-                        {% else %}
-                        <h2>Result:</h2>
-                        <h3>{{ result }}</h3>
-                        {% endif %}
-
-                    </div>
+                    <table class="pure-table pure-table-horizontal">
+                        <thead>
+                        <tr>
+                            {% if error == True %}
+                                <td class="result-error">Error</td>
+                            {% else %}
+                                <td>Results</td>
+                                <td></td>
+                            {% endif %}
+                        </tr>
+                        </thead>
+                        <tr>
+                            {% with messages = get_flashed_messages() %}
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        <tr>
+                                            {% for item in message.split(':') %}
+                                                <td>{{ item }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
