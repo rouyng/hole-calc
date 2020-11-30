@@ -10,9 +10,9 @@ function toggleTol () {
     let tolDivs = document.getElementsByClassName("tol-params")
     for (let f of tolDivs) {
             if (document.getElementById("tol_radio-1").checked) {
-                f.style.visibility = "visible";
+                f.style.display = "inline-block";
             } else {
-                f.style.visibility = "hidden";
+                f.style.display = "none";
             }
     }
 }

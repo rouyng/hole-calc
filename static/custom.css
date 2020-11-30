@@ -11,7 +11,7 @@
 }
 
 .tol-params {
-    visibility: hidden;
+    display: none;
 }
 
 .result-error {
