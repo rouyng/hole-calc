@@ -34,12 +34,12 @@ def test_index(flask_app, client):
 
 
 def test_about(flask_app, client):
-    response = client.get('/about.html')
+    response = client.get('/about/')
     assert response.status_code == 200
 
 
 def test_guide(flask_app, client):
-    response = client.get('/guide.html')
+    response = client.get('/guide/')
     assert response.status_code == 200
 
 
