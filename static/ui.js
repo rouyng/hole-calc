@@ -36,10 +36,11 @@
         if (e.target.id === menuLink.id) {
             return toggleAll(e);
         }
-        
-        if (menu.className.indexOf('active') !== -1) {
+// Commented the following lines out because they were breaking links from hamburger menu.
+// See https://github.com/pure-css/pure/issues/809
+/*        if (menu.className.indexOf('active') !== -1) {
             return toggleAll(e);
-        }
+        }*/
     }
     
     document.addEventListener('click', handleEvent);
