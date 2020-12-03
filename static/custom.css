@@ -17,3 +17,22 @@
 .result-error {
     color: rgb(202, 60, 60)
 }
+
+/* Space Grotesk font family */
+@font-face {
+    font-family: "spaceg";
+    src: url("/static/fonts/SpaceGrotesk-Regular.woff2") format('woff2');
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: "spaceg";
+    src: url("/static/fonts/SpaceGrotesk-Bold.woff2") format('woff2');
+    font-weight: 700;
+}
+
+@font-face {
+    font-family: "spaceg";
+    src: url("/static/fonts/SpaceGrotesk-Light.woff2") format('woff2');
+    font-weight: 200;
+}
