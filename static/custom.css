@@ -18,6 +18,15 @@
     color: rgb(202, 60, 60)
 }
 
+.header h1 {
+    font-family: spaceg, sans-serif;
+    font-weight: 700;
+}
+
+.pure-menu-heading, .pure-menu-link {
+    font-family: spaceg, sans-serif;
+}
+
 /* Space Grotesk font family */
 @font-face {
     font-family: "spaceg";
