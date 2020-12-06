@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Hole gauging calculator">
-    <link rel="stylesheet" href="/static/pure-min.css">
-    <link rel="stylesheet" href="/static/styles.css">
-    <link rel="stylesheet" href="/static/grids-responsive-min.css">
-    <link rel="stylesheet" href="/static/custom.css">
-    	<!-- ****** faviconit.com favicons ****** -->
+    <style type="text/css">
+      @import url("/static/pure-min.css");
+      @import url("/static/grids-responsive-min.css");
+      @import url("/static/styles.css");
+    </style>
+    <!-- ****** faviconit.com favicons ****** -->
 	<link rel="shortcut icon" href="/static/favicons/favicon.ico">
 	<link rel="icon" sizes="16x16 32x32 64x64" href="/static/favicons/favicon.ico">
 	<link rel="icon" type="image/png" sizes="196x196" href="/static/favicons/favicon-192.png">
@@ -38,7 +39,6 @@
 <div class="header">
     <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
         <a class="pure-menu-heading" href="/">HOLE CALC</a>
-
         <ul class="pure-menu-list">
             <li class="pure-menu-item"><a class="pure-menu-link" href="/guide/" >Guide</a></li>
             <li class="pure-menu-item"><a class="pure-menu-link" href="/about/">About</a></li>
@@ -46,7 +46,5 @@
     </div>
 </div>
 {% block content %}{% endblock %}
-
-
 </body>
 </html>
