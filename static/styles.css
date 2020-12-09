@@ -86,7 +86,7 @@ The content `<div>` is where all your content goes.
 /* Styles for menu at top of page */
 
 .home-menu {
-    padding: 0.5em;
+    padding: 0.25em;
     text-align: center;
     background: var(--dark-accent);
     box-shadow: 0 1px 1px rgba(0,0,0, 0.10);
