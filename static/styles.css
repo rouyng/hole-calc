@@ -125,7 +125,9 @@ The content `<div>` is where all your content goes.
 
 .pure-button-primary {
     /* Button for calculation actions */
-    background: var(--button-go)
+    background: var(--attn-accent);
+    color: var(--dark-text);
+    border: 1px solid var(--dark-accent);
 }
 
 .button-error {
