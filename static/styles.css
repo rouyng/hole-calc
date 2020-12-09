@@ -120,8 +120,9 @@ The content `<div>` is where all your content goes.
     color: var(--light-text);
 }
 
-/* Custom classes used by holecalc */
-.button-calculate {
+/* button and input styling */
+
+.pure-button-primary {
     /* Button for calculation actions */
     background: var(--button-go)
 }
