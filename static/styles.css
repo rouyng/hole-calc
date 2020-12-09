@@ -80,6 +80,7 @@ The content `<div>` is where all your content goes.
     margin: 50px 0 20px 0;
     font-weight: 300;
     color: var(--dark-accent);
+    font-family: spaceg, sans-serif;
 }
 
 
@@ -87,6 +88,7 @@ The content `<div>` is where all your content goes.
 
 .home-menu {
     padding: 0.25em;
+    font-family: spaceg, sans-serif;
     text-align: center;
     background: var(--dark-accent);
     box-shadow: 0 1px 1px rgba(0,0,0, 0.10);
@@ -102,7 +104,6 @@ The content `<div>` is where all your content goes.
 .home-menu .pure-menu-heading {
     color: var(--light-accent);
     font-weight: 700;
-    font-family: spaceg, sans-serif;
     font-size: 120%;
 }
 
