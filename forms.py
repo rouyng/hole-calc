@@ -54,7 +54,7 @@ class ThreeHoleForm(FlaskForm):
         label='Tolerance',
         choices=[
             ('nom', 'Nominal'),
-            ('tol', 'Class')
+            ('tol', 'Tolerance')
         ],
         default='nom'
     )
