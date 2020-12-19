@@ -73,6 +73,16 @@ The content `<div>` is where all your content goes.
     font-family: spaceg, sans-serif;
 }
 
+.pure-form legend {
+    font-weight: 400;
+    font-size: 1.5em;
+    color: var(--dark-accent);
+    font-family: spaceg, sans-serif;
+}
+
+tr {
+    background: #fff;
+}
 
 /* Styles for menu at top of page */
 
