@@ -6,20 +6,32 @@
         <div class="content">
             <h2 class="content-subhead">How to use this site</h2>
             <p>
-                Hole calc provides a simple calculator to determine the diameter of a hole/bore based on the size of three pin gauges (a.k.a. plug gauges or gages) that fit into it. This three-gauge method can provide a quick way to measure bore diameters when you don't have access to a GO/NOGO gauge or other precision bore measuring method. Measurements obtained via the three-gauge method should be considered approximate relative to the use of these other methods.
+                Hole calc provides a simple calculator to determine the diameter of a hole/bore based on the size of three pin gages (a.k.a. plug gages or gauges) that fit into it. This three-gage method can provide a quick way to measure bore diameters when you don't have access to a GO/NOGO gage pair or other precision bore measuring method. Measurements obtained via the three-pin method should be considered approximate relative to the use of these other methods.
             </p>
+            <h2 class="content-subhead">Steps</h2>
+            <ol>
+                <li>Prepare the hole to be measured. Make sure the bore is clean and dry and the edge of the hole is free from burrs.</li>
+                <li>Select three clean, dry gage pins that will slide in to the bore together.</li>
+                <li>If needed, replace one of the pins with a larger or smaller diameter pin in order to adjust the fit within the bore. The pins should slide in and out by hand. Each pin should contact both the other two pins and the wall of the bore without any play.</li>
+                <li>Once a well fitting combination of pins is found, enter the diameter of each pin into hole calc.</li>
+                <li>If you want to see a result range based on gage class, select the "Tolerance" radio button. Enter the tolerance class and sign for each gage pin using the drop-down fields that appear. See the "Precautions" selection below for more information on tolerance mode.</li>
+                <li>Select desired units and digits of precision from the drop-down fields.</li>
+                <li>Press the "Calculate" button</li>
+                <li>Your result should appear to the right of the input fields (desktop) or below (mobile). If your inputted values are invalid (not a number or mathematically impossible), an error message will appear.</li>
+            </ol>
 
             <h2 class="content-subhead">Precautions</h2>
             <p>
-                This calculator simply does the math for you- it does not substitute for an understanding of the metrology involved in measuring holes. A full overview of how to use pin gauges and measure holes is outside the scope of this guide (<a href="https://www.newmantools.com/meyer/pluggage_ABC.htm">here is a good start</a>). However, the following caveats should be kept in mind when attempting to do precision work using the three-pin method:
+                This calculator simply does the math for you- it does not substitute for an understanding of the metrology involved in measuring holes. A full overview of how to use pin gages and measure holes is outside the scope of this guide (<a href="https://www.newmantools.com/meyer/pluggage_ABC.htm">here is a good start</a>). However, the following caveats should be kept in mind when attempting to do precision work using the three-pin method:
             </p>
             <ul>
-                <li>Every gauge pin has a class indicating the tolerance of the pin diameter and are designated "+" or "-". The tolerance of each pin and resulting stackup will affect the measurement of the hole.</li>
-                <li>As with the standard GO/NOGO method of measuring a bore, surface roughness, (lack of) edge breaks and material will all affect how easily gauges slide into the bore and therefore the choice of gauges used for the final measurement.</li>
-                <li>The three gauge method assumes the bore to be perfectly round. If the bore is oval-shaped or lobed, the three gauge method will provide inconsistent results depending on the relative position of the gauges within the bore.</li>
+                <li>Every gage pin has a class indicating the tolerance of the pin diameter and are designated as plus or minus relative to the nominal size. The tolerance of each pin and resulting stack-up will affect the measurement of the hole. Hole calc has a "Tolerance" mode that will automatically calculate minimum/maximum values based on tolerance class and sign of each pin. While this can provide a high degree of numeric precision, the degree to which this reflects the actual size of the hole will depend on the precision of your measuring process.</li>
+                <li>As with the standard GO/NOGO method of measuring a bore, insertion pressure, surface roughness, cleanliness, (lack of) edge breaks and material will all affect how easily gages slide into the bore and therefore the choice of gages used for the final measurement.</li>
+                <li>The three gage method assumes the bore to be perfectly round. If the bore is oval-shaped or lobed, the three gage method will provide inconsistent results depending on the relative position of the gages within the bore.</li>
 
             </ul>
-
+            <h2 class="content-subhead">The Math</h2>
+            <p>This calculator is based on <a href="https://en.wikipedia.org/wiki/Descartes%27_theorem">Descartes' Theorem</a>, which states that for every four kissing, or mutually tangent, circles, the radii of the circles satisfy a certain quadratic equation. If we assume the three pins used for the calcualtor measurement all touch each other as well as the larger bore they fit into, finding the diameter of the bore is a straightforward application of the quadratic equation described in this theorem. Keep in mind that it's possible to have certain combinations of pin diameter and bore diameter that are mutually tangent <i>without</i> visually filling the entire space of the bore. While it's unlikely to encounter this scenario during actual measuring use, it's still a valid application of the theorem and the calculator. So if you're seeing an odd result, verify in your CAD program of choice or pen and paper before submitting a bug report.</p>
 
         </div>
     </div>
