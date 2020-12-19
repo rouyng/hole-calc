@@ -18,12 +18,13 @@ class PinClassSelect(SelectField):
         super().__init__(
             label=f'Pin {pin_number} Class',
             choices=[
-                ('XX', 'XX'),
-                ('X', 'X'),
-                ('Y', 'Y'),
-                ('Z', 'Z'),
                 ('ZZ', 'ZZ'),
+                ('Z', 'Z'),
+                ('Y', 'Y'),
+                ('X', 'X'),
+                ('XX', 'XX'),
             ],
+            default='ZZ',
             **kwargs
 
         )
@@ -81,7 +82,8 @@ class ThreeHoleForm(FlaskForm):
             ('0.01', '0.01'),
             ('0.001', '0.001'),
             ('0.0001', '0.0001'),
-        ]
+        ],
+        default='0.001'
     )
     calculate = SubmitField('Calculate')
 
