@@ -187,8 +187,8 @@ def calculate_hole_size_limits(pin1: tuple, pin2: tuple, pin3: tuple, units: str
     pin2_limits = pin_tolerance_limits(pin2[0], pin2[1], pin2[2], units)
     pin3_limits = pin_tolerance_limits(pin3[0], pin3[1], pin3[2], units)
     if None in (pin1_limits, pin2_limits, pin3_limits):
-        return {'result': None, 'error': 'Pin is beyond tolerance class limits'}, \
-               {'result': None, 'error': 'Pin is beyond tolerance class limits'}
+        return {'result': None, 'error': 'Diameter over tolerance class limit, use nominal mode'}, \
+               {'result': None, 'error': 'Diameter over tolerance class limit, use nominal mode'}
     min_hole = calculate_hole_size(pin1_limits[0], pin2_limits[0], pin3_limits[0])
     max_hole = calculate_hole_size(pin1_limits[1], pin2_limits[1], pin3_limits[1])
     return min_hole, max_hole
