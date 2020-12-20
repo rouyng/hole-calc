@@ -1,5 +1,5 @@
 from config import TestConfig
-from app import app as hc_app
+from main import app as hc_app
 import pytest
 
 """
