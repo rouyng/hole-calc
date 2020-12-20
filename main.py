@@ -1,10 +1,9 @@
 from flask import Flask, render_template, request, flash
 from holecalc import holecalc as hc
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 import logging
 from forms import ThreeHoleForm
 from flask_wtf.csrf import CSRFProtect
-import os
 from config import DevConfig
 
 app = Flask(__name__)
