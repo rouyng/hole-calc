@@ -1,21 +1,12 @@
-FROM python:3.9-alpine
-RUN adduser -D holes
-WORKDIR /home/holes
+FROM tiangolo/meinheld-gunicorn-flask:python3.8
+WORKDIR /app/app
 COPY Pipfile Pipfile
 COPY Pipfile.lock Pipfile.lock
-RUN python -m venv venv
-RUN venv/bin/pip install --upgrade pip
-RUN venv/bin/pip install pipenv
-RUN venv/bin/pipenv lock --requirements > requirements.txt
-RUN venv/bin/pip install -r requirements.txt
-RUN venv/bin/pip install gunicorn
+RUN pip install --upgrade pip
+RUN pip install pipenv
+RUN pipenv lock --requirements > requirements.txt
+RUN pip install -r requirements.txt
 COPY holecalc holecalc
 COPY templates templates
 COPY static static
-COPY app.py boot.sh config.py forms.py ./
-RUN chmod a+x boot.sh
-ENV FLASK_APP app.py
-RUN chown -R holes:holes ./
-USER holes
-EXPOSE 5000
-ENTRYPOINT ["./boot.sh"]
+COPY main.py config.py forms.py ./
