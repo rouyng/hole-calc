@@ -18,9 +18,9 @@ Add Space Grotesk font
 @font-face {
     font-family: "spaceg";
     src: url('/static/fonts/SpaceGrotesk[wght].woff2') format('woff2 supports variations'),
-       url('/static/fonts/SpaceGrotesk[wght].woff2') format('woff2-variations');
+    url('/static/fonts/SpaceGrotesk[wght].woff2') format('woff2-variations');
     font-weight: 100 1000;
-	font-stretch: 25% 151%;
+    font-stretch: 25% 151%;
     font-display: swap;
 }
 
@@ -49,23 +49,25 @@ The content `<div>` is where all your content goes.
 }
 
 .header {
-     margin: 0;
-     color: var(--dark-accent);
-     text-align: center;
-     padding: 2.5em 2em 0;
-     border-bottom: 1px solid #eee;
- }
-    .header h1 {
-        margin: 0.2em 0;
-        font-size: 3em;
-        font-weight: 400;
-    }
-     .header h2 {
-        font-weight: 400;
-        color: var(--dark-accent);
-        padding: 0;
-        margin-top: 0;
-    }
+    margin: 0;
+    color: var(--dark-accent);
+    text-align: center;
+    padding: 2.5em 2em 0;
+    border-bottom: 1px solid #eee;
+}
+
+.header h1 {
+    margin: 0.2em 0;
+    font-size: 3em;
+    font-weight: 400;
+}
+
+.header h2 {
+    font-weight: 400;
+    color: var(--dark-accent);
+    padding: 0;
+    margin-top: 0;
+}
 
 .content-subhead {
     margin: 50px 0 20px 0;
@@ -92,7 +94,7 @@ tr {
     font-family: spaceg, sans-serif;
     text-align: center;
     background: var(--dark-accent);
-    box-shadow: 0 1px 1px rgba(0,0,0, 0.10);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.10);
 }
 
 .pure-menu.pure-menu-fixed {
@@ -115,6 +117,7 @@ tr {
 .home-menu a {
     color: var(--light-accent);
 }
+
 .home-menu li a:hover,
 .home-menu li a:focus {
     background: none;
@@ -157,5 +160,28 @@ tr {
 
     .home-menu ul {
         float: right;
+    }
+}
+
+/* Loading animation, from https://vineethtrv.github.io/loader/ */
+.loader {
+    width: 25px;
+    height: 25px;
+    border: 3px solid;
+    border-color: var(--attn-accent) transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    vertical-align: middle;
+    visibility: hidden;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
     }
 }
