@@ -1,5 +1,6 @@
 FROM tiangolo/meinheld-gunicorn-flask:python3.8
 WORKDIR /app/app
+ENV PORT 8080
 COPY Pipfile Pipfile
 COPY Pipfile.lock Pipfile.lock
 RUN pip install --upgrade pip
