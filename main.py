@@ -5,6 +5,7 @@ import logging
 from forms import ThreePinForm, ReverseForm, PinSizeForm
 from flask_wtf.csrf import CSRFProtect
 from config import DevConfig
+import copy
 
 app = Flask(__name__)
 # import config settings (key) from config.py module
@@ -18,7 +19,7 @@ default_calc_menu = {"Three Pin": {'route': "/",
                                    'selected': False},
                      "Reverse": {'route': "/reverse",
                                  'selected': False},
-                     "Gage Sizes": {'route': "/pinsize",
+                     "Gage Size": {'route': "/pinsize",
                                     'selected': False}}
 
 
@@ -41,7 +42,7 @@ def guide():
 @app.route('/', methods=('GET', 'POST'))
 def three_pin_calc_render():
     form = ThreePinForm()
-    calc_menu = default_calc_menu
+    calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Three Pin']['selected'] = True
     if request.method == 'POST':
         if not form.validate_on_submit():
@@ -106,7 +107,7 @@ def three_pin_calc_render():
 @app.route('/reverse', methods=('GET', 'POST'))
 def reverse_calc_render():
     form = ReverseForm()
-    calc_menu = default_calc_menu
+    calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Reverse']['selected'] = True
     if request.method == 'POST':
         pass
@@ -124,14 +125,14 @@ def reverse_calc_render():
 @app.route('/pinsize', methods=('GET', 'POST'))
 def pin_calc_render():
     form = PinSizeForm()
-    calc_menu = default_calc_menu
+    calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Gage Size']['selected'] = True
     if request.method == 'POST':
         pass
     else:
         calc_error = False
         rounded_result = None
-    return render_template('reverse.html',
+    return render_template('pinsize.html',
                            form=form,
                            calc_menu=calc_menu,
                            error=calc_error,

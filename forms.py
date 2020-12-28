@@ -91,7 +91,7 @@ class ThreePinForm(FlaskForm):
 class ReverseForm(FlaskForm):
     pin1 = PinSizeDecimal(1)
     pin2 = PinSizeDecimal(2)
-    hole = DecimalField(label=f'Hole Diameter', validators=[DataRequired()])
+    bore = DecimalField(label=f'Bore Diameter', validators=[DataRequired()])
     units = SelectField(
         label='Units',
         choices=[
@@ -113,22 +113,14 @@ class ReverseForm(FlaskForm):
 
 
 class PinSizeForm(FlaskForm):
-    pin_dia = DecimalField(label="Nominal Gage Diameter", validators=[DataRequired()])
+    pin_dia = PinSizeDecimal(1)
+    pin_class = PinClassSelect(1)
+    pin_sign = PinSignSelect(1)
     units = SelectField(
         label='Units',
         choices=[
             ('in', 'IN'),
             ('mm', 'MM')
         ]
-    )
-    precision = SelectField(
-        label='Precision',
-        choices=[
-            ('0.1', '0.1'),
-            ('0.01', '0.01'),
-            ('0.001', '0.001'),
-            ('0.0001', '0.0001'),
-        ],
-        default='0.001'
     )
     calculate = SubmitField('Calculate')
