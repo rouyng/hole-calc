@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, flash
 from holecalc import holecalc as hc
 from decimal import Decimal
 import logging
-from forms import ThreeHoleForm
+from forms import ThreePinForm, ReverseForm, PinSizeForm
 from flask_wtf.csrf import CSRFProtect
 from config import DevConfig
 
@@ -32,13 +32,13 @@ def guide():
 
 
 @app.route('/', methods=('GET', 'POST'))
-def home_calc():
-    form = ThreeHoleForm()
+def three_pin_calc_render():
+    form = ThreePinForm()
     if request.method == 'POST':
         if not form.validate_on_submit():
             flash('Form validation failed')
             return render_template(
-                '3hole.html',
+                'threepin.html',
                 form=form,
                 error=True
             )
@@ -87,11 +87,38 @@ def home_calc():
         calc_error = False
         rounded_result = None
 
-    return render_template('3hole.html',
+    return render_template('threepin.html',
                            form=form,
                            error=calc_error,
                            result=rounded_result)
 
+
+@app.route('/reverse', methods=('GET', 'POST'))
+def reverse_calc_render():
+    form = ReverseForm()
+    if request.method == 'POST':
+        pass
+    else:
+        calc_error = False
+        rounded_result = None
+    return render_template('reverse.html',
+                           form=form,
+                           error=calc_error,
+                           result=rounded_result)
+
+
+@app.route('/pinsize', methods=('GET', 'POST'))
+def pin_calc_render():
+    form = PinSizeForm()
+    if request.method == 'POST':
+        pass
+    else:
+        calc_error = False
+        rounded_result = None
+    return render_template('reverse.html',
+                           form=form,
+                           error=calc_error,
+                           result=rounded_result)
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')

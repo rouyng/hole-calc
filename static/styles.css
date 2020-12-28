@@ -185,3 +185,13 @@ tr {
         transform: rotate(360deg);
     }
 }
+
+/* Styling for tabbed calculator forms */
+
+#pinsize .calc {
+    display: none;
+}
+
+#reverse .calc {
+    display: none;
+}

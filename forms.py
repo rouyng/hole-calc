@@ -48,7 +48,7 @@ class PinSignSelect(SelectField):
         )
 
 
-class ThreeHoleForm(FlaskForm):
+class ThreePinForm(FlaskForm):
     """Defines the 3-pin hole measuring form"""
 
     tol_radio = RadioField(
@@ -88,3 +88,47 @@ class ThreeHoleForm(FlaskForm):
     calculate = SubmitField('Calculate')
 
 
+class ReverseForm(FlaskForm):
+    pin1 = PinSizeDecimal(1)
+    pin2 = PinSizeDecimal(2)
+    hole = DecimalField(label=f'Hole Diameter', validators=[DataRequired()])
+    units = SelectField(
+        label='Units',
+        choices=[
+            ('in', 'IN'),
+            ('mm', 'MM')
+        ]
+    )
+    precision = SelectField(
+        label='Precision',
+        choices=[
+            ('0.1', '0.1'),
+            ('0.01', '0.01'),
+            ('0.001', '0.001'),
+            ('0.0001', '0.0001'),
+        ],
+        default='0.001'
+    )
+    calculate = SubmitField('Calculate')
+
+
+class PinSizeForm(FlaskForm):
+    pin_dia = DecimalField(label="Nominal Gage Diameter", validators=[DataRequired()])
+    units = SelectField(
+        label='Units',
+        choices=[
+            ('in', 'IN'),
+            ('mm', 'MM')
+        ]
+    )
+    precision = SelectField(
+        label='Precision',
+        choices=[
+            ('0.1', '0.1'),
+            ('0.01', '0.01'),
+            ('0.001', '0.001'),
+            ('0.0001', '0.0001'),
+        ],
+        default='0.001'
+    )
+    calculate = SubmitField('Calculate')

@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-wrapper">
+        <div class="content">
+
+            <div class="pure-u-1">
+                <br>
+                <p>Not sure how to use this calculator? <a href="/guide/">Read the guide</a></p>
+                <br>
+            </div>
+
+            <div class="pure-menu pure-menu-horizontal">
+                <ul class="pure-menu-list">
+                    <li class="pure-menu-item pure-menu-selected">
+                        <a href="/" class="pure-menu-link">Three Pin</a>
+                    </li>
+                    <li class="pure-menu-item">
+                        <a href="/reverse" class="pure-menu-link">Three Pin Reverse</a>
+                    </li>
+                    <li class="pure-menu-item">
+                        <a href="/pinsize" class="pure-menu-link">Gage Dimensions</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="pure-g">
+                {% block threepin %}
+                {% endblock %}
+                {% block reverse %}
+                {% endblock %}
+                {% block pinsize %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
