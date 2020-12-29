@@ -44,6 +44,7 @@ class PinSignSelect(SelectField):
                 ('+', '+'),
                 ('-', '-')
             ],
+            default='-',
             **kwargs
         )
 
