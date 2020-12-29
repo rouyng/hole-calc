@@ -188,10 +188,10 @@ tr {
 
 /* Styling for tabbed calculator forms */
 
-#pinsize .calc {
-    display: none;
+.pure-menu-selected {
+    background-color: var(--mid-accent);
 }
 
-#reverse .calc {
-    display: none;
+.calc-menu {
+    border-bottom: 3px solid var(--mid-accent);
 }
