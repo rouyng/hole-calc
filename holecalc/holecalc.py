@@ -41,7 +41,8 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
 
     Tolerance class information from https://www.newmantools.com/meyer/pluggage_ABC.htm
     """
-
+    logging.info(f"Calculating pin tolerance bounds: {nominal} dia, "
+                 f"{tol_class} class, positive {is_plus}, units {units}")
     nominal_dia = Decimal(nominal)
     if units not in ("in", "mm"):
         raise ValueError(f"Invalid units specified: {units}")
@@ -170,6 +171,7 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
         tolerance_bounds = (nominal_dia, nominal_dia + tolerance)
     else:
         tolerance_bounds = (nominal_dia - tolerance, nominal_dia)
+    logging.info(f"Calculated pin tolerance bounds: {tolerance_bounds}")
     return tolerance_bounds
 
 
