@@ -63,7 +63,6 @@ def three_pin_calc_render():
         pin3 = form.pin3.data
         pin3_class = form.pin3_class.data
         pin1_is_pos = form.pin3_sign.data == '+'
-        rounded_result = None
         calc_error = False
         tol_type = form.tol_radio.data
         if tol_type == 'nom':
@@ -95,13 +94,11 @@ def three_pin_calc_render():
                 flash(str(e))
     else:
         calc_error = False
-        rounded_result = None
 
     return render_template('threepin.html',
                            form=form,
                            error=calc_error,
-                           calc_menu=calc_menu,
-                           result=rounded_result)
+                           calc_menu=calc_menu)
 
 
 @app.route('/pinsize', methods=('GET', 'POST'))
@@ -122,7 +119,6 @@ def pin_calc_render():
             pin_dia = form.pin_dia.data
             pin_class = form.pin_class.data
             pin_is_pos = form.pin_sign.data == '+'
-            rounded_result = None
             if form_units == 'in':
                 precision = "0.000001"
             else:
@@ -147,8 +143,7 @@ def pin_calc_render():
     return render_template('pinsize.html',
                            form=form,
                            error=calc_error,
-                           calc_menu=calc_menu,
-                           result=rounded_result)
+                           calc_menu=calc_menu)
 
 
 @app.route('/reverse', methods=('GET', 'POST'))
@@ -161,12 +156,10 @@ def reverse_calc_render():
         pass
     else:
         calc_error = False
-        rounded_result = None
     return render_template('reverse.html',
                            form=form,
                            calc_menu=calc_menu,
-                           error=calc_error,
-                           result=rounded_result)
+                           error=calc_error)
 
 
 if __name__ == '__main__':
