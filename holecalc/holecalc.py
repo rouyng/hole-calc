@@ -50,6 +50,7 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
     # tolerance classes for gauge pins have upper and lower bounds, if nominal dimension is outside
     # these bounds, return None
     elif (nominal_dia < Decimal(".0009") or nominal_dia > Decimal("12.2600")) and units == "in":
+        # TODO: refactor pin_tolerance_limits() so out-of-range generate descriptive exceptions
         return None
     elif (nominal_dia < Decimal("1.00") or nominal_dia > Decimal("300.00")) and units == "mm":
         return None
@@ -170,6 +171,17 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
     else:
         tolerance_bounds = (nominal_dia - tolerance, nominal_dia)
     return tolerance_bounds
+
+
+def pin_size_wrapper(w_nominal: str, w_tol_class: str, w_is_plus: bool, w_units: str = "in"):
+    """wrap pin_tolerance_limits() with error handling for use in web gui"""
+    try:
+        result = pin_tolerance_limits(w_nominal, w_tol_class, w_is_plus, w_units)
+    except ValueError as e:
+        return {'result': None, 'error': str(e)}
+    if result is None:
+        return {'result': None, 'error': 'Diameter not within tolerance class limits'}
+    return {'result': result, 'error': None}
 
 
 def calculate_hole_size_limits(pin1: tuple, pin2: tuple, pin3: tuple, units: str):
