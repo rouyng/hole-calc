@@ -61,33 +61,33 @@ class TestCalculations:
                      "Z": "0.000400",
                      "ZZ": "0.000800"}.items():
             for _ in range(0, 20):
-                test_dia = str(round(random.uniform(9.0101, 12.2600), 4))
+                test_dia = str(round(random.uniform(9.0101, 12.010), 4))
                 pos_result = holecalc.pin_tolerance_limits(test_dia, t, True, units="in")
                 assert pos_result == (Decimal(test_dia), Decimal(test_dia) + Decimal(v))
                 pos_result = holecalc.pin_tolerance_limits(test_dia, t, True, units="in")
                 assert pos_result == (Decimal(test_dia), Decimal(test_dia) + Decimal(v))
 
     def test_mm_small_tolerances(self):
-        for t, v in {"XX": "0.0005",
-                     "X": "0.0010",
-                     "Y": "0.0018",
-                     "Z": "0.0025",
-                     "ZZ": "0.0050"}.items():
+        for t, v in {"XX": "0.00051",
+                     "X": "0.00102",
+                     "Y": "0.00178",
+                     "Z": "0.00254",
+                     "ZZ": "0.00508"}.items():
             for _ in range(0, 20):
-                test_dia = str(round(random.uniform(1.00, 21.00), 3))
+                test_dia = str(round(random.uniform(0.254, 2.096), 3))
                 pos_result = holecalc.pin_tolerance_limits(test_dia, t, True, units="mm")
                 assert pos_result == (Decimal(test_dia), Decimal(test_dia) + Decimal(v))
                 pos_result = holecalc.pin_tolerance_limits(test_dia, t, True, units="mm")
                 assert pos_result == (Decimal(test_dia), Decimal(test_dia) + Decimal(v))
 
     def test_mm_large_tolerances(self):
-        for t, v in {"XX": "0.0025",
-                     "X": "0.0051",
-                     "Y": "0.0076",
-                     "Z": "0.0100",
-                     "ZZ": "0.0200"}.items():
+        for t, v in {"XX": "0.00254",
+                     "X": "0.00508",
+                     "Y": "0.00762",
+                     "Z": "0.01016",
+                     "ZZ": "0.02032"}.items():
             for _ in range(0, 20):
-                test_dia = str(round(random.uniform(230.01, 300.00), 3))
+                test_dia = str(round(random.uniform(228.86, 305.05), 3))
                 pos_result = holecalc.pin_tolerance_limits(test_dia, t, True, units="mm")
                 assert pos_result == (Decimal(test_dia), Decimal(test_dia) + Decimal(v))
                 pos_result = holecalc.pin_tolerance_limits(test_dia, t, True, units="mm")
@@ -106,11 +106,11 @@ class TestCalculations:
             assert "Invalid tolerance class" in str(execinfo)
 
     def test_in_tolerance_bounds(self):
-        test_dia = str(round(random.uniform(0.00005, 0.0008), 4))
+        test_dia = str(round(random.uniform(0.00005, 0.0010), 4))
         assert holecalc.pin_tolerance_limits(test_dia, "X", True, units="in") is None
 
     def test_mm_tolerance_bounds(self):
-        test_dia = str(round(random.uniform(0.00005, 0.9999), 4))
+        test_dia = str(round(random.uniform(0.00005, 0.254), 4))
         assert holecalc.pin_tolerance_limits(test_dia, "X", True, units="mm") is None
 
     def test_tolerance_hole_measurement_in(self):
@@ -141,7 +141,7 @@ class TestCalculations:
         assert results[0]['error'] is None
         assert results[0]['error'] is None
         assert str(results[0]['result'].quantize(Decimal("0.001"))) == "240.219"
-        assert str(results[1]['result'].quantize(Decimal("0.001"))) == "240.174"
+        assert str(results[1]['result'].quantize(Decimal("0.001"))) == "240.173"
 
 
 class TestWrapper():
