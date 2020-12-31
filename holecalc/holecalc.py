@@ -41,7 +41,8 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
 
     Tolerance class information from ASME B89.1.5-1998
     """
-
+    logging.info(f"Calculating pin tolerance bounds: {nominal} dia, "
+                 f"{tol_class} class, positive {is_plus}, units {units}")
     nominal_dia = Decimal(nominal)
     if units not in ("in", "mm"):
         raise ValueError(f"Invalid units specified: {units}")
@@ -50,6 +51,8 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
     # tolerance classes for gauge pins have upper and lower bounds, if nominal dimension is outside
     # these bounds, return None
     elif (nominal_dia <= Decimal(".0010") or nominal_dia > Decimal("21.010")) and units == "in":
+        # TODO: refactor pin_tolerance_limits() so out-of-range generate descriptive exceptions
+
         return None
     elif (nominal_dia <= Decimal("0.254") or nominal_dia > Decimal("533.65")) and units == "mm":
         return None
@@ -211,7 +214,19 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
         tolerance_bounds = (nominal_dia, nominal_dia + tolerance)
     else:
         tolerance_bounds = (nominal_dia - tolerance, nominal_dia)
+    logging.info(f"Calculated pin tolerance bounds: {tolerance_bounds}")
     return tolerance_bounds
+
+
+def pin_size_wrapper(w_nominal: str, w_tol_class: str, w_is_plus: bool, w_units: str = "in"):
+    """wrap pin_tolerance_limits() with error handling for use in web gui"""
+    try:
+        result = pin_tolerance_limits(w_nominal, w_tol_class, w_is_plus, w_units)
+    except ValueError as e:
+        return {'result': None, 'error': str(e)}
+    if result is None:
+        return {'result': None, 'error': 'Diameter not within tolerance class limits'}
+    return {'result': result, 'error': None}
 
 
 def calculate_hole_size_limits(pin1: tuple, pin2: tuple, pin3: tuple, units: str):

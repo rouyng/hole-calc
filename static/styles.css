@@ -185,3 +185,13 @@ tr {
         transform: rotate(360deg);
     }
 }
+
+/* Styling for tabbed calculator forms */
+
+.pure-menu-selected {
+    background-color: var(--mid-accent);
+}
+
+.calc-menu {
+    border-bottom: 3px solid var(--mid-accent);
+}

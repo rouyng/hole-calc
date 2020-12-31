@@ -2,9 +2,10 @@ from flask import Flask, render_template, request, flash
 from holecalc import holecalc as hc
 from decimal import Decimal
 import logging
-from forms import ThreeHoleForm
+from forms import ThreePinForm, ReverseForm, PinSizeForm
 from flask_wtf.csrf import CSRFProtect
 from config import DevConfig
+import copy
 
 app = Flask(__name__)
 # import config settings (key) from config.py module
@@ -13,6 +14,13 @@ app.config.from_object(DevConfig)
 csrf = CSRFProtect(app)
 # Set logging level to show INFO-level or higher
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+default_calc_menu = {"Three Pin": {'route': "/",
+                                   'selected': False},
+                     "Reverse": {'route': "/reverse",
+                                 'selected': False},
+                     "Gage Size": {'route': "/pinsize",
+                                    'selected': False}}
 
 
 @app.route('/heartbeat')
@@ -32,13 +40,15 @@ def guide():
 
 
 @app.route('/', methods=('GET', 'POST'))
-def home_calc():
-    form = ThreeHoleForm()
+def three_pin_calc_render():
+    form = ThreePinForm()
+    calc_menu = copy.deepcopy(default_calc_menu)
+    calc_menu['Three Pin']['selected'] = True
     if request.method == 'POST':
         if not form.validate_on_submit():
             flash('Form validation failed')
             return render_template(
-                '3hole.html',
+                'threepin.html',
                 form=form,
                 error=True
             )
@@ -53,7 +63,6 @@ def home_calc():
         pin3 = form.pin3.data
         pin3_class = form.pin3_class.data
         pin1_is_pos = form.pin3_sign.data == '+'
-        rounded_result = None
         calc_error = False
         tol_type = form.tol_radio.data
         if tol_type == 'nom':
@@ -85,12 +94,72 @@ def home_calc():
                 flash(str(e))
     else:
         calc_error = False
-        rounded_result = None
 
-    return render_template('3hole.html',
+    return render_template('threepin.html',
                            form=form,
                            error=calc_error,
-                           result=rounded_result)
+                           calc_menu=calc_menu)
+
+
+@app.route('/pinsize', methods=('GET', 'POST'))
+def pin_calc_render():
+    form = PinSizeForm()
+    calc_menu = copy.deepcopy(default_calc_menu)
+    calc_menu['Gage Size']['selected'] = True
+    if request.method == 'POST':
+        if not form.validate_on_submit():
+            flash('Form validation failed')
+            return render_template(
+                'reverse.html',
+                form=form,
+                error=True
+            )
+        else:
+            form_units = form.units.data
+            pin_dia = form.pin_dia.data
+            pin_class = form.pin_class.data
+            pin_is_pos = form.pin_sign.data == '+'
+            if form_units == 'in':
+                precision = "0.000001"
+            else:
+                precision = "0.0001"
+            calc_result = hc.pin_size_wrapper(w_nominal=pin_dia,
+                                              w_units=form_units,
+                                              w_is_plus=pin_is_pos,
+                                              w_tol_class=pin_class)
+            if calc_result['result'] is None:
+                calc_error = True
+                flash(calc_result['error'])
+            else:
+                calc_error = False
+                result_values = (calc_result['result'][0].quantize(Decimal(precision)),
+                                 calc_result['result'][1].quantize(Decimal(precision)))
+                flash('Min gage diameter:' + str(min(result_values)))
+                flash('Max gage diameter:' + str(max(result_values)))
+
+    else:
+        calc_error = False
+
+    return render_template('pinsize.html',
+                           form=form,
+                           error=calc_error,
+                           calc_menu=calc_menu)
+
+
+@app.route('/reverse', methods=('GET', 'POST'))
+def reverse_calc_render():
+    form = ReverseForm()
+
+    calc_menu = copy.deepcopy(default_calc_menu)
+    calc_menu['Reverse']['selected'] = True
+    if request.method == 'POST':
+        pass
+    else:
+        calc_error = False
+    return render_template('reverse.html',
+                           form=form,
+                           calc_menu=calc_menu,
+                           error=calc_error)
 
 
 if __name__ == '__main__':

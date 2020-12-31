@@ -142,3 +142,33 @@ class TestCalculations:
         assert results[0]['error'] is None
         assert str(results[0]['result'].quantize(Decimal("0.001"))) == "240.219"
         assert str(results[1]['result'].quantize(Decimal("0.001"))) == "240.173"
+
+
+class TestWrapper():
+    """Unit test functions that wrap math functions"""
+
+    def test_pin_size_wrapper_in(self):
+        for t, v in {"XX": "0.000020",
+                     "X": "0.00004",
+                     "Y": "0.00007",
+                     "Z": "0.0001",
+                     "ZZ": "0.0002"}.items():
+            for _ in range(0, 20):
+                test_dia = str(round(random.uniform(.0009, .8250), 4))
+                pos_result = holecalc.pin_size_wrapper(test_dia, t, True, "in")
+                assert pos_result['result'] == (Decimal(test_dia), Decimal(test_dia) + Decimal(v))
+                pos_result = holecalc.pin_size_wrapper(test_dia, t, True, "in")
+                assert pos_result['result'] == (Decimal(test_dia), Decimal(test_dia) + Decimal(v))
+
+    def test_pin_size_wrapper_mm(self):
+        for t, v in {"XX": "0.0005",
+                     "X": "0.0010",
+                     "Y": "0.0018",
+                     "Z": "0.0025",
+                     "ZZ": "0.0050"}.items():
+            for _ in range(0, 20):
+                test_dia = str(round(random.uniform(1.00, 21.00), 3))
+                pos_result = holecalc.pin_size_wrapper(test_dia, t, True, "mm")
+                assert pos_result['result'] == (Decimal(test_dia), Decimal(test_dia) + Decimal(v))
+                pos_result = holecalc.pin_size_wrapper(test_dia, t, True, "mm")
+                assert pos_result['result'] == (Decimal(test_dia), Decimal(test_dia) + Decimal(v))
