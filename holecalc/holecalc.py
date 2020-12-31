@@ -39,7 +39,7 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
     """Return the minimum and maximum diameter of a gauge pin, given the nominal size in units,
     the tolerance class of the gauge, and whether it is a plus or minus pin.
 
-    Tolerance class information from https://www.newmantools.com/meyer/pluggage_ABC.htm
+    Tolerance class information from ASME B89.1.5-1998
     """
 
     nominal_dia = Decimal(nominal)
@@ -49,110 +49,152 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
         raise ValueError(f"Invalid tolerance class specified: {tol_class}")
     # tolerance classes for gauge pins have upper and lower bounds, if nominal dimension is outside
     # these bounds, return None
-    elif (nominal_dia < Decimal(".0009") or nominal_dia > Decimal("12.2600")) and units == "in":
+    elif (nominal_dia <= Decimal(".0010") or nominal_dia > Decimal("21.010")) and units == "in":
         return None
-    elif (nominal_dia < Decimal("1.00") or nominal_dia > Decimal("300.00")) and units == "mm":
+    elif (nominal_dia <= Decimal("0.254") or nominal_dia > Decimal("533.65")) and units == "mm":
         return None
     tol_table_in = {
-        "0.8250": {
-            'XX': Decimal("0.00002"),
+        "0.825": {
+            'XX': Decimal("0.000020"),
             'X': Decimal("0.000040"),
             'Y': Decimal("0.000070"),
             'Z': Decimal("0.000100"),
             'ZZ': Decimal("0.000200")
         },
-        "1.5100": {
+        "1.510": {
             'XX': Decimal("0.000030"),
             'X': Decimal("0.000060"),
             'Y': Decimal("0.000090"),
             'Z': Decimal("0.000120"),
             'ZZ': Decimal("0.000240")
         },
-        "2.5100": {
+        "2.510": {
             'XX': Decimal("0.000040"),
             'X': Decimal("0.000080"),
             'Y': Decimal("0.000120"),
             'Z': Decimal("0.000160"),
             'ZZ': Decimal("0.000320")
         },
-        "4.5100": {
+        "4.510": {
             'XX': Decimal("0.000050"),
             'X': Decimal("0.000100"),
             'Y': Decimal("0.000150"),
             'Z': Decimal("0.000200"),
             'ZZ': Decimal("0.000400")
         },
-        "6.5100": {
+        "6.510": {
             'XX': Decimal("0.000065"),
             'X': Decimal("0.000130"),
             'Y': Decimal("0.000190"),
             'Z': Decimal("0.000250"),
             'ZZ': Decimal("0.000500")
         },
-        "9.0100": {
+        "9.010": {
             'XX': Decimal("0.000080"),
             'X': Decimal("0.000160"),
             'Y': Decimal("0.000240"),
             'Z': Decimal("0.000320"),
             'ZZ': Decimal("0.000640")
         },
-        "12.2600": {
+        "12.010": {
             'XX': Decimal("0.000100"),
             'X': Decimal("0.000200"),
             'Y': Decimal("0.000300"),
             'Z': Decimal("0.000400"),
             'ZZ': Decimal("0.000800")
+        },
+        "15.010": {
+            'XX': Decimal("0.000150"),
+            'X': Decimal("0.000300"),
+            'Y': Decimal("0.000450"),
+            'Z': Decimal("0.000600"),
+            'ZZ': Decimal("0.001200")
+        },
+        "18.010": {
+            'XX': Decimal("0.000200"),
+            'X': Decimal("0.000400"),
+            'Y': Decimal("0.000600"),
+            'Z': Decimal("0.000800"),
+            'ZZ': Decimal("0.001600")
+        },
+        "21.010": {
+            'XX': Decimal("0.000250"),
+            'X': Decimal("0.000500"),
+            'Y': Decimal("0.000750"),
+            'Z': Decimal("0.001000"),
+            'ZZ': Decimal("0.002000")
         }
     }
     tol_table_mm = {
-        "21.00": {
-            'XX': Decimal("0.0005"),
-            'X': Decimal("0.0010"),
-            'Y': Decimal("0.0018"),
-            'Z': Decimal("0.0025"),
-            'ZZ': Decimal("0.0050")
+        "20.96": {
+            'XX': Decimal("0.00051"),
+            'X': Decimal("0.00102"),
+            'Y': Decimal("0.00178"),
+            'Z': Decimal("0.00254"),
+            'ZZ': Decimal("0.00508")
         },
-        "38.00": {
-            'XX': Decimal("0.0008"),
-            'X': Decimal("0.0015"),
-            'Y': Decimal("0.0023"),
-            'Z': Decimal("0.0030"),
-            'ZZ': Decimal("0.0060")
+        "38.35": {
+            'XX': Decimal("0.00076"),
+            'X': Decimal("0.00152"),
+            'Y': Decimal("0.00229"),
+            'Z': Decimal("0.00305"),
+            'ZZ': Decimal("0.00610")
         },
-        "64.00": {
-            'XX': Decimal("0.0010"),
-            'X': Decimal("0.0020"),
-            'Y': Decimal("0.0030"),
-            'Z': Decimal("0.0040"),
-            'ZZ': Decimal("0.0080")
+        "63.75": {
+            'XX': Decimal("0.00102"),
+            'X': Decimal("0.00203"),
+            'Y': Decimal("0.00305"),
+            'Z': Decimal("0.00406"),
+            'ZZ': Decimal("0.00813")
         },
-        "115.00": {
-            'XX': Decimal("0.0013"),
-            'X': Decimal("0.0025"),
-            'Y': Decimal("0.0038"),
-            'Z': Decimal("0.0050"),
-            'ZZ': Decimal("0.0100")
+        "114.55": {
+            'XX': Decimal("0.00127"),
+            'X': Decimal("0.00254"),
+            'Y': Decimal("0.00381"),
+            'Z': Decimal("0.00508"),
+            'ZZ': Decimal("0.01016")
         },
-        "165.00": {
-            'XX': Decimal("0.0017"),
-            'X': Decimal("0.0033"),
-            'Y': Decimal("0.0048"),
-            'Z': Decimal("0.0060"),
-            'ZZ': Decimal("0.0130")
+        "165.35": {
+            'XX': Decimal("0.00165"),
+            'X': Decimal("0.00330"),
+            'Y': Decimal("0.00483"),
+            'Z': Decimal("0.00635"),
+            'ZZ': Decimal("0.01270")
         },
-        "230.00": {
-            'XX': Decimal("0.0020"),
-            'X': Decimal("0.0041"),
-            'Y': Decimal("0.0061"),
-            'Z': Decimal("0.0080"),
-            'ZZ': Decimal("0.0160")
+        "228.85": {
+            'XX': Decimal("0.00203"),
+            'X': Decimal("0.00406"),
+            'Y': Decimal("0.00610"),
+            'Z': Decimal("0.00813"),
+            'ZZ': Decimal("0.01626")
         },
-        "300.00": {
-            'XX': Decimal("0.0025"),
-            'X': Decimal("0.0051"),
-            'Y': Decimal("0.0076"),
-            'Z': Decimal("0.0100"),
-            'ZZ': Decimal("0.0200")
+        "305.05": {
+            'XX': Decimal("0.00254"),
+            'X': Decimal("0.00508"),
+            'Y': Decimal("0.00762"),
+            'Z': Decimal("0.01016"),
+            'ZZ': Decimal("0.02032")
+        },
+        "381.25": {
+            'XX': Decimal("0.00381"),
+            'X': Decimal("0.00762"),
+            'Y': Decimal("0.01143"),
+            'Z': Decimal("0.01524"),
+            'ZZ': Decimal("0.03048")
+        },
+        "457.45": {
+            'XX': Decimal("0.00508"),
+            'X': Decimal("0.01016"),
+            'Y': Decimal("0.01524"),
+            'Z': Decimal("0.02032"),
+            'ZZ': Decimal("0.04064")
+        },
+        "533.65": {
+            'XX': Decimal("0.00635"),
+            'X': Decimal("0.01270"),
+            'Y': Decimal("0.01905"),
+            'Z': Decimal("0.02540"),
+            'ZZ': Decimal("0.05080")
         }
     }
     if units == "in":
