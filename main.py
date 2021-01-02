@@ -4,6 +4,7 @@ from decimal import Decimal
 import logging
 from forms import ThreePinForm, ReverseForm, PinSizeForm
 from flask_wtf.csrf import CSRFProtect
+from wtforms import ValidationError
 from config import DevConfig
 import copy
 
@@ -149,17 +150,31 @@ def pin_calc_render():
 @app.route('/reverse', methods=('GET', 'POST'))
 def reverse_calc_render():
     form = ReverseForm()
-
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Reverse']['selected'] = True
     if request.method == 'POST':
-        pass
-    else:
-        calc_error = False
+        try:
+            form.validate()
+        except ValidationError as e:
+            flash(str(e))
+            return render_template(
+                'reverse.html',
+                form=form,
+                calc_menu=calc_menu)
+        form_units = form.units.data
+        precision = form.precision.data
+        pin1 = form.pin1.data
+        pin2 = form.pin2.data
+        bore_dia = form.bore.data
+        calc_result = hc.calculate_remaining_pin(bore_dia, pin1, pin2)
+        if calc_result['error'] is not None:
+            flash(calc_result['error'])
+        else:
+            formatted_result = str(calc_result['result'].quantize(Decimal(precision)))
+            flash(f'Diameter: {formatted_result} {form_units}')
     return render_template('reverse.html',
                            form=form,
-                           calc_menu=calc_menu,
-                           error=calc_error)
+                           calc_menu=calc_menu)
 
 
 if __name__ == '__main__':

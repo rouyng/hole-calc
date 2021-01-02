@@ -1,15 +1,14 @@
 from flask_wtf import FlaskForm
 from wtforms import DecimalField, StringField, TextField, RadioField, SelectField, SubmitField
-from wtforms.validators import DataRequired, Length
+from wtforms.validators import DataRequired, NumberRange
 
 
 class PinSizeDecimal(DecimalField):
     def __init__(self, pin_number: int, **kwargs):
         super().__init__(
             label=f'Pin {pin_number}',
-            validators=[DataRequired()],
+            validators=[DataRequired(), NumberRange(min=0.00001, max=9999, message="Input value must be at least %(min)s")],
             **kwargs
-
         )
 
 

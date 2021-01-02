@@ -52,7 +52,6 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
     # these bounds, return None
     elif (nominal_dia <= Decimal(".0010") or nominal_dia > Decimal("21.010")) and units == "in":
         # TODO: refactor pin_tolerance_limits() so out-of-range generate descriptive exceptions
-
         return None
     elif (nominal_dia <= Decimal("0.254") or nominal_dia > Decimal("533.65")) and units == "mm":
         return None
@@ -265,7 +264,12 @@ def calculate_center_positions(pin1: float, pin2: float, pin3: float, hole_dia):
     pass
 
 
-def calculate_remaining_pin(hole_dia: float, pin1: float, pin2: float, ) -> float:
-    """From two pin sizes calculate the required third pin diameter to gauge hole diameter"""
-    # placeholder for planned functionality
-    pass
+def calculate_remaining_pin(hole_dia: str, pin1: str, pin2: str, ) -> dict:
+    """From two pin sizes calculate the required third pin diameter to gauge hole diameter.
+    This function is used for the reverse calculator in the web gui.
+
+    Mathematically, it uses the Descartes theorem as in calculate_hole_size(), with one of the
+    "pin" values flipped to a negative sign to represent the enclosing tangent circle (bore dia)"""
+    bore_dia = -1 * hole_dia
+    return calculate_hole_size(bore_dia, pin1, pin2)
+
