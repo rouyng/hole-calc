@@ -51,7 +51,7 @@ def three_pin_calc_render():
             return render_template(
                 'threepin.html',
                 form=form,
-                error=True
+                calc_menu=calc_menu
             )
         form_units = form.units.data
         precision = form.precision.data
@@ -64,7 +64,6 @@ def three_pin_calc_render():
         pin3 = form.pin3.data
         pin3_class = form.pin3_class.data
         pin1_is_pos = form.pin3_sign.data == '+'
-        calc_error = False
         tol_type = form.tol_radio.data
         if tol_type == 'nom':
             calc_result = hc.calculate_hole_size(pin1, pin2, pin3)
@@ -73,7 +72,6 @@ def three_pin_calc_render():
                     raise ValueError(calc_result['error'])
                 flash('Diameter:' + str(calc_result['result'].quantize(Decimal(precision))))
             except (TypeError, ValueError) as e:
-                calc_error = True
                 flash(str(e))
         else:
             try:
@@ -91,14 +89,9 @@ def three_pin_calc_render():
                 flash('Min diameter:' + str(min(result_values)))
                 flash('Max diameter:' + str(max(result_values)))
             except (TypeError, ValueError) as e:
-                calc_error = True
                 flash(str(e))
-    else:
-        calc_error = False
-
     return render_template('threepin.html',
                            form=form,
-                           error=calc_error,
                            calc_menu=calc_menu)
 
 
@@ -112,8 +105,7 @@ def pin_calc_render():
             flash('Form validation failed')
             return render_template(
                 'reverse.html',
-                form=form,
-                error=True
+                form=form
             )
         else:
             form_units = form.units.data
@@ -129,21 +121,14 @@ def pin_calc_render():
                                               w_is_plus=pin_is_pos,
                                               w_tol_class=pin_class)
             if calc_result['result'] is None:
-                calc_error = True
                 flash(calc_result['error'])
             else:
-                calc_error = False
                 result_values = (calc_result['result'][0].quantize(Decimal(precision)),
                                  calc_result['result'][1].quantize(Decimal(precision)))
                 flash('Min gage diameter:' + str(min(result_values)))
                 flash('Max gage diameter:' + str(max(result_values)))
-
-    else:
-        calc_error = False
-
     return render_template('pinsize.html',
                            form=form,
-                           error=calc_error,
                            calc_menu=calc_menu)
 
 
