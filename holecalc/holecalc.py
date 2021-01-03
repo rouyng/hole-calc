@@ -10,7 +10,7 @@ getcontext().rounding = "ROUND_HALF_UP"
 logging.getLogger().setLevel(logging.INFO)
 
 
-def calculate_hole_size(pin1: str, pin2: str, pin3: str):
+def calculate_hole_size(pin1: str, pin2: str, pin3: str) -> dict:
     """From three known pin diameters, calculate diameter of hole they fit into
 
     This is an application of Descartes' Theorem, which states that for every four
@@ -270,6 +270,6 @@ def calculate_remaining_pin(hole_dia: str, pin1: str, pin2: str, ) -> dict:
 
     Mathematically, it uses the Descartes theorem as in calculate_hole_size(), with one of the
     "pin" values flipped to a negative sign to represent the enclosing tangent circle (bore dia)"""
-    bore_dia = -1 * hole_dia
+    bore_dia = -1 * Decimal(hole_dia)
     return calculate_hole_size(bore_dia, pin1, pin2)
 
