@@ -75,6 +75,6 @@ def test_pin_size_calculation_mm(flask_app, client):
                  "pin_sign": "-",
                  "units": "mm"}
     response = client.post('/pinsize', data=post_data)
-    assert b"64.9900" in response.data
+    assert b"64.9898" in response.data
     assert b"65.0000" in response.data
 

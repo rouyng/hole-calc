@@ -156,19 +156,21 @@ class TestWrapper():
             for _ in range(0, 20):
                 test_dia = str(round(random.uniform(.0009, .8250), 4))
                 pos_result = holecalc.pin_size_wrapper(test_dia, t, True, "in")
-                assert pos_result['result'] == (Decimal(test_dia), Decimal(test_dia) + Decimal(v))
-                pos_result = holecalc.pin_size_wrapper(test_dia, t, True, "in")
-                assert pos_result['result'] == (Decimal(test_dia), Decimal(test_dia) + Decimal(v))
+                desired_result = Decimal(test_dia) + Decimal(v)
+                precision = Decimal("0.00001")
+                assert pos_result['result'] == (Decimal(test_dia).quantize(precision),
+                                                desired_result.quantize(precision))
 
     def test_pin_size_wrapper_mm(self):
-        for t, v in {"XX": "0.0005",
-                     "X": "0.0010",
-                     "Y": "0.0018",
-                     "Z": "0.0025",
-                     "ZZ": "0.0050"}.items():
+        for t, v in {"XX": "0.00051",
+                     "X": "0.00102",
+                     "Y": "0.00178",
+                     "Z": "0.00254",
+                     "ZZ": "0.00508"}.items():
             for _ in range(0, 20):
                 test_dia = str(round(random.uniform(1.00, 21.00), 3))
                 pos_result = holecalc.pin_size_wrapper(test_dia, t, True, "mm")
-                assert pos_result['result'] == (Decimal(test_dia), Decimal(test_dia) + Decimal(v))
-                pos_result = holecalc.pin_size_wrapper(test_dia, t, True, "mm")
-                assert pos_result['result'] == (Decimal(test_dia), Decimal(test_dia) + Decimal(v))
+                desired_result = Decimal(test_dia) + Decimal(v)
+                precision = Decimal("0.00001")
+                assert pos_result['result'] == (Decimal(test_dia).quantize(precision),
+                                                desired_result.quantize(precision))
