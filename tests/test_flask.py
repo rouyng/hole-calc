@@ -5,7 +5,7 @@ import pytest
 """
 Tests for the flask app
 
-These tests are functional tests of the user-accessible functionality exposed by the flask app
+These tests are integration tests of the user-accessible functionality exposed by the flask app
 """
 
 
