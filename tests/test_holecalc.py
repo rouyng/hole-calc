@@ -19,8 +19,8 @@ def test_import():
     assert "holecalc" in sys.modules
 
 
-class TestCalculations:
-    """Unit test the math functions"""
+class TestHoleSizeCalculation:
+    """Unit test the functions that calculate bore diameter from three pin diameters"""
     def test_example_values_1(self):
         test_result = holecalc.calculate_hole_size("1", "2", "3")['result']
         assert str(test_result.quantize(Decimal("0.001"))) == "6.000"
@@ -40,6 +40,40 @@ class TestCalculations:
     def test_invalid_input(self):
         assert holecalc.calculate_hole_size("50", "1", "0.01") == \
                {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
+
+    def test_tolerance_hole_measurement_in(self):
+        results = holecalc.calculate_hole_size_limits(
+            ("1.000", "ZZ", True),
+            ("2.000", "ZZ", True),
+            ("3.000", "ZZ", True), "in")
+        assert results[0]['error'] is None
+        assert results[0]['error'] is None
+        assert str(results[0]['result'].quantize(Decimal("0.0001"))) == "6.0000"
+        assert str(results[1]['result'].quantize(Decimal("0.0001"))) == "6.0003"
+
+    def test_tolerance_hole_measurement_mm(self):
+        results = holecalc.calculate_hole_size_limits(
+            ("1.00", "ZZ", True),
+            ("2.00", "ZZ", True),
+            ("3.00", "ZZ", True), "mm")
+        assert results[0]['error'] is None
+        assert results[0]['error'] is None
+        assert str(results[0]['result'].quantize(Decimal("0.01"))) == "6.00"
+        assert str(results[1]['result'].quantize(Decimal("0.01"))) == "6.00"
+
+    def test_tolerance_hole_measurement_mm_2(self):
+        results = holecalc.calculate_hole_size_limits(
+            ("64.25", "Y", True),
+            ("11.10", "Z", True),
+            ("25.35", "ZZ", True), "mm")
+        assert results[0]['error'] is None
+        assert results[0]['error'] is None
+        assert str(results[0]['result'].quantize(Decimal("0.001"))) == "240.219"
+        assert str(results[1]['result'].quantize(Decimal("0.001"))) == "240.173"
+
+
+class TestPinTolerance:
+    """Unit test functions that calculate gage pin tolerances"""
 
     def test_in_small_tolerances(self):
         for t, v in {"XX": "0.000020",
@@ -113,40 +147,7 @@ class TestCalculations:
         test_dia = str(round(random.uniform(0.00005, 0.254), 4))
         assert holecalc.pin_tolerance_limits(test_dia, "X", True, units="mm") is None
 
-    def test_tolerance_hole_measurement_in(self):
-        results = holecalc.calculate_hole_size_limits(
-            ("1.000", "ZZ", True),
-            ("2.000", "ZZ", True),
-            ("3.000", "ZZ", True), "in")
-        assert results[0]['error'] is None
-        assert results[0]['error'] is None
-        assert str(results[0]['result'].quantize(Decimal("0.0001"))) == "6.0000"
-        assert str(results[1]['result'].quantize(Decimal("0.0001"))) == "6.0003"
-
-    def test_tolerance_hole_measurement_mm(self):
-        results = holecalc.calculate_hole_size_limits(
-            ("1.00", "ZZ", True),
-            ("2.00", "ZZ", True),
-            ("3.00", "ZZ", True), "mm")
-        assert results[0]['error'] is None
-        assert results[0]['error'] is None
-        assert str(results[0]['result'].quantize(Decimal("0.01"))) == "6.00"
-        assert str(results[1]['result'].quantize(Decimal("0.01"))) == "6.00"
-
-    def test_tolerance_hole_measurement_mm_2(self):
-        results = holecalc.calculate_hole_size_limits(
-            ("64.25", "Y", True),
-            ("11.10", "Z", True),
-            ("25.35", "ZZ", True), "mm")
-        assert results[0]['error'] is None
-        assert results[0]['error'] is None
-        assert str(results[0]['result'].quantize(Decimal("0.001"))) == "240.219"
-        assert str(results[1]['result'].quantize(Decimal("0.001"))) == "240.173"
-
-
-class TestWrapper():
-    """Unit test functions that wrap math functions"""
-
+    # Test functions that wrap pin_tolerance_limits for gui use
     def test_pin_size_wrapper_in(self):
         for t, v in {"XX": "0.000020",
                      "X": "0.00004",
@@ -174,3 +175,13 @@ class TestWrapper():
                 precision = Decimal("0.00001")
                 assert pos_result['result'] == (Decimal(test_dia).quantize(precision),
                                                 desired_result.quantize(precision))
+
+
+class TestReversePin:
+    """Unit tests for the functions that calculate the third pin diameter from two pin diameters
+    and a bore diameter."""
+
+    def test_reverse_calculation_1(self):
+        precision = Decimal("0.0001")
+        test_result = holecalc.calculate_remaining_pin("6", "1", "2")
+        assert test_result['result'].quantize(precision) == Decimal("3.0000")
