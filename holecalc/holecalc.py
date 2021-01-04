@@ -31,6 +31,9 @@ def calculate_hole_size(pin1: str, pin2: str, pin3: str) -> dict:
                                            + curvatures[0]*curvatures[2]).sqrt())
     result = abs(hole_rad * 2)
     if any([result < Decimal(d) for d in (pin1, pin2, pin3)]):
+        # TODO: this won't work for reverse/two pin calculations, need to create another function
+        #  or refactor this one
+        logging.debug(f"{result} is less than one diameter in {(pin1, pin2, pin3)}")
         return {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
     return {'result': result, 'error': None}
 

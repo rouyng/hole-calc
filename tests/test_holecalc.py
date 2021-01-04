@@ -185,3 +185,8 @@ class TestReversePin:
         precision = Decimal("0.0001")
         test_result = holecalc.calculate_remaining_pin("6", "1", "2")
         assert test_result['result'].quantize(precision) == Decimal("3.0000")
+
+    def test_reverse_calculation_2(self):
+        precision = Decimal("0.0001")
+        test_result = holecalc.calculate_remaining_pin("240.219", "64.25", "11.1")
+        assert test_result['result'].quantize(precision) == Decimal("25.3500")
