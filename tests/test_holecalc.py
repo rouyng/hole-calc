@@ -183,10 +183,16 @@ class TestReversePin:
 
     def test_reverse_calculation_1(self):
         precision = Decimal("0.0001")
-        test_result = holecalc.calculate_remaining_pin("6", "1", "2")
+        test_result = holecalc.calculate_remaining_pin(bore_dia="6", pin1="1", pin2="2")
         assert test_result['result'].quantize(precision) == Decimal("3.0000")
 
     def test_reverse_calculation_2(self):
         precision = Decimal("0.0001")
-        test_result = holecalc.calculate_remaining_pin("240.219", "64.25", "11.1")
+        test_result = holecalc.calculate_remaining_pin(bore_dia="240.219", pin1="64.25", pin2="11.1")
         assert test_result['result'].quantize(precision) == Decimal("25.3500")
+
+    def test_reverse_invalid_bore(self):
+        precision = Decimal("0.0001")
+        test_result = holecalc.calculate_remaining_pin(bore_dia="2", pin1="3", pin2="1")
+        assert test_result['result'] is None
+        assert test_result['error'] == "Cannot calculate pin dimension, check pin/bore diameters"
