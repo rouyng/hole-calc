@@ -316,7 +316,7 @@ def calculate_remaining_pin(bore_dia: str, pin1: str, pin2: str, ) -> dict:
         logging.debug(str(e))
         return {'result': None, 'error': 'Cannot calculate pin dimension, check pin/bore diameters'}
     if any([Decimal(bore_dia) < Decimal(d) for d in (pin1, pin2, result)]):
-        logging.info(f"One of the pin diameters in {(pin1, pin2, result)} is greater than "
+        logging.debug(f"One of the pin diameters in {(pin1, pin2, result)} is greater than "
                       f"the bore diameter {bore_dia}")
         return {'result': None, 'error': 'Cannot calculate pin dimension, check pin/bore diameters'}
     return {'result': result, 'error': None}
