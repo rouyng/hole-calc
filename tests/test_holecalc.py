@@ -196,3 +196,9 @@ class TestReversePin:
         test_result = holecalc.calculate_remaining_pin(bore_dia="2", pin1="3", pin2="1")
         assert test_result['result'] is None
         assert test_result['error'] == "Cannot calculate pin dimension, check pin/bore diameters"
+
+    def test_reverse_negative_value(self):
+        precision = Decimal("0.0001")
+        test_result = holecalc.calculate_remaining_pin(bore_dia="6", pin1="-3", pin2="1")
+        assert test_result['result'] is None
+        assert test_result['error'] == "Cannot calculate pin dimension, check pin/bore diameters"
