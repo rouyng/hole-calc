@@ -186,6 +186,12 @@ tr {
     }
 }
 
+/* set text/border color for forms that fail html5 validation */
+.pure-form input:focus:invalid, .pure-form select:focus:invalid, .pure-form textarea:focus:invalid {
+    color: var(--error-accent);
+    border-color: var(--error-accent);
+}
+
 /* Styling for tabbed calculator forms */
 
 .pure-menu-horizontal.calc-menu {
@@ -200,6 +206,7 @@ tr {
 .calc-menu .pure-menu-selected {
     background-color: var(--dark-accent);
 }
+
 .calc-menu .pure-menu-selected .pure-menu-link{
     color: var(--light-text);
 }
@@ -212,6 +219,7 @@ tr {
     background-color: var(--mid-accent);
     border-radius: 3px 3px 0 0;
 }
+
 .calc-menu .pure-menu-selected .pure-menu-link:hover {
     background-color: var(--dark-accent);
 
