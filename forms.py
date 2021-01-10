@@ -91,7 +91,7 @@ class ThreePinForm(FlaskForm):
 class ReverseForm(FlaskForm):
     pin1 = PinSizeDecimal(1)
     pin2 = PinSizeDecimal(2)
-    bore = DecimalField(label=f'Bore', validators=[DataRequired()])
+    bore = DecimalField(label='Bore', validators=[DataRequired()])
     units = SelectField(
         label='Units',
         choices=[
