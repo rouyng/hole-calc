@@ -188,10 +188,32 @@ tr {
 
 /* Styling for tabbed calculator forms */
 
-.pure-menu-selected {
-    background-color: var(--mid-accent);
+.pure-menu-horizontal.calc-menu {
+    border-bottom: 3px solid var(--dark-accent);
 }
 
-.calc-menu {
-    border-bottom: 3px solid var(--mid-accent);
+.calc-menu .pure-menu-item {
+    background-color: var(--light-accent);
+    border-radius: 3px 3px 0 0;
 }
+
+.calc-menu .pure-menu-selected {
+    background-color: var(--dark-accent);
+}
+.calc-menu .pure-menu-selected .pure-menu-link{
+    color: var(--light-text);
+}
+
+.calc-menu .pure-menu-link {
+    color: var(--dark-accent);
+}
+
+.calc-menu .pure-menu-link:hover {
+    background-color: var(--mid-accent);
+    border-radius: 3px 3px 0 0;
+}
+.calc-menu .pure-menu-selected .pure-menu-link:hover {
+    background-color: var(--dark-accent);
+
+}
+
