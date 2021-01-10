@@ -5,7 +5,7 @@
                             <p>Given two gage pin diameters and a bore diameter, this calculator provides the diameter of a third gage pin needed to fit that bore.</p>
                         </div>
                         <div class="pure-u-1 pure-u-md-1-2">
-                            <form class="pure-form" method="post" onsubmit="loading();">
+                            <form class="pure-form pure-form-aligned" method="post" onsubmit="loading();">
                                 {{ form.csrf_token }}
                                 <fieldset>
                                     <legend>Measurements</legend>
@@ -13,25 +13,27 @@
                                     <div class="pure-g">
                                         <div class="pure-u-1" style="padding-bottom: 0.5em">
                                             {# Pin 1 size #}
-                                            {{ form.pin1(class="pure-input-1-3", type="number", min="0.001", step="0.001", autocomplete="off", placeholder="Gage diameter", style="display: inline-block; margin-bottom: 0em;") }}
+                                            {{ form.pin1.label(class="pure-u-1-8") }}
+                                            {{ form.pin1(class="pure-input-1-3", type="number", min="0.001", step="0.001", autocomplete="off", placeholder="Diameter", style="display: inline-block; margin-bottom: 0em;") }}
                                         </div>
                                         <div class="pure-u-1" style="padding-bottom: 0.5em">
                                             {# Pin 2 size #}
-                                            {{ form.pin2(class="pure-input-1-3", type="number", min="0.001", step="0.001", autocomplete="off", placeholder="Gage diameter", style="display: inline-block; margin-bottom: 0em;") }}
+                                            {{ form.pin2.label(class="pure-u-1-8") }}
+                                            {{ form.pin2(class="pure-input-1-3", type="number", min="0.001", step="0.001", autocomplete="off", placeholder="Diameter", style="display: inline-block; margin-bottom: 0em;") }}
                                         </div>
-                                        <div class="pure-u-1" style="padding-bottom: 0.5em; padding-top: 0.5em">
+                                        <div class="pure-u-1" style="padding-bottom: 0.5em">
                                             {# Bore size #}
-                                            {{ form.bore.label }}
-                                            {{ form.bore(class="pure-input-1-3", type="number", min="0.001", step="0.001", autocomplete="off", style="display: inline-block; margin-bottom: 0em;") }}
+                                            {{ form.bore.label(class="pure-u-1-8") }}
+                                            {{ form.bore(class="pure-input-1-3", type="number", min="0.001", step="0.001", autocomplete="off", placeholder="Diameter", style="display: inline-block; margin-bottom: 0em;") }}
                                         </div>
                                         <div class="pure-u-1" style="padding-bottom: 0.5em; padding-top: 1em">
                                             {# Form units #}
-                                            {{ form.units.label }}
+                                            {{ form.units.label(class="pure-u-1-8") }}
                                             {{ form.units(class="pure-input") }}
                                         </div>
                                         <div class="pure-u-1" style="padding-bottom: 1em; padding-top: 0.5em">
                                             {# Form precision #}
-                                            {{ form.precision.label }}
+                                            {{ form.precision.label(class="pure-u-1-6") }}
                                             {{ form.precision(class="pure-input") }}
                                         </div>
 
