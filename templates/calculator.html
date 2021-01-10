@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-wrapper">
+        <div class="content">
+            <div class="pure-u-1">
+                <br>
+                <p>Hole calc provides calculators to help measure bores with gage pins. Questions? <a href="/guide/">Read the guide</a></p>
+                <br>
+            </div>
+            {# Calculators tab menu #}
+            <div class="pure-menu pure-menu-horizontal calc-menu">
+                <ul class="pure-menu-list">
+                    {% for label, values in calc_menu.items() %}
+                        <li class="pure-menu-item{% if values['selected'] %} pure-menu-selected{% endif %}">
+                            <a href="{{ values['route'] }}" class="pure-menu-link">{{ label }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="pure-g">
+                {% block threepin %}
+                {% endblock %}
+                {% block reverse %}
+                {% endblock %}
+                {% block pinsize %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
