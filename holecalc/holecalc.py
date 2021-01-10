@@ -320,4 +320,3 @@ def calculate_remaining_pin(bore_dia: str, pin1: str, pin2: str, ) -> dict:
                       f"the bore diameter {bore_dia}")
         return {'result': None, 'error': 'Cannot calculate pin dimension, check pin/bore diameters'}
     return {'result': result, 'error': None}
-

@@ -21,7 +21,7 @@ default_calc_menu = {"Three Pin": {'route': "/",
                      "Reverse": {'route': "/reverse",
                                  'selected': False},
                      "Gage Size": {'route': "/pinsize",
-                                    'selected': False}}
+                                   'selected': False}}
 
 
 @app.route('/heartbeat')
