@@ -1,4 +1,4 @@
-from decimal import Decimal, getcontext
+from decimal import Decimal, getcontext, InvalidOperation
 import logging
 
 
@@ -10,27 +10,49 @@ getcontext().rounding = "ROUND_HALF_UP"
 logging.getLogger().setLevel(logging.INFO)
 
 
-def calculate_hole_size(pin1: str, pin2: str, pin3: str):
-    """From three known pin diameters, calculate diameter of hole they fit into
+def descartes(k1: Decimal, k2: Decimal, k3: Decimal) -> Decimal:
+    """Implementation of Descartes theorem, which states that for every four
+    mutually tangent circles, the radii of the circles satisfy a certain quadratic equation.
+    The curvature parameters used in this value are calculated as k = ±1/r, where r == circle radius
 
-    This is an application of Descartes' Theorem, which states that for every four
-    mutually tangent circles, the radii of the circles satisfy a certain quadratic equation
-    :param pin1: String representing decimal size of first pin, ex: "1.000"
-    :param pin2: String representing decimal size of first pin, ex: "2.000"
-    :param pin3: String representing decimal size of first pin, ex: "3.000"
-    :returns: Dictionary containing "result" and "error" entries. result contains a Decimal
-    object or none if an error occurs, Error contains descriptive math error text (if applicable)
+    For more mathematical details, see https://en.wikipedia.org/wiki/Descartes%27_theorem
+
+    :param k1: Decimal object representing curvature of circle 1
+    :param k2: Decimal object representing curvature of circle 2
+    :param k3: Decimal object representing curvature of circle 3
+    :returns: Decimal object representing diameter of circle 4, which is mutually tangent to circles
+    1, 2 and 3.
+    """
+    radius = 1 / (sum((k1, k2, k3)) - 2 * (k1 * k2 + k2 * k3 + k1 * k3).sqrt())
+    return abs(radius * 2)
+
+
+def calculate_hole_size(pin1: str, pin2: str, pin3: str) -> dict:
+    """From three known pin diameters, calculate diameter of hole they fit into using
+    Descartes' Theorem. Exceptions raised by math errors are caught and passed to gui functions as
+    descriptive text.
+
+    :param pin1: String representing decimal diameter of first pin, ex: "1.000"
+    :param pin2: String representing decimal diameter of second pin, ex: "2.000"
+    :param pin3: String representing decimal diameter of third pin, ex: "3.000"
+    :returns: Dictionary containing "result" and "error" keys. result value is a Decimal
+    object representing the diameter of the bore. If an error occurs, error value is
+    descriptive math error text.
     """
     try:
         curvatures = [1/(Decimal(d) / 2) for d in (pin1, pin2, pin3)]  # determine curvatures
-    except ZeroDivisionError:
+        result = descartes(curvatures[0], curvatures[1], curvatures[2])
+    except ZeroDivisionError as e:
+        # no pin diameter should be zero, if that occurs ZeroDivisionError is raised
+        logging.debug(str(e))
         return {'result': None, 'error': 'Pin dimension cannot be zero'}
-
-    hole_rad = 1 / (sum(curvatures) - 2 * (curvatures[0]*curvatures[1]
-                                           + curvatures[1]*curvatures[2]
-                                           + curvatures[0]*curvatures[2]).sqrt())
-    result = abs(hole_rad * 2)
+    except InvalidOperation as e:
+        # if something that the decimal library can't understand as a number is passed, this
+        # exception is raised
+        logging.debug(str(e))
+        return {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
     if any([result < Decimal(d) for d in (pin1, pin2, pin3)]):
+        logging.debug(f"{result} is less than one diameter in {(pin1, pin2, pin3)}")
         return {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
     return {'result': result, 'error': None}
 
@@ -41,7 +63,8 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
 
     Tolerance class information from ASME B89.1.5-1998
     """
-
+    logging.info(f"Calculating pin tolerance bounds: {nominal} dia, "
+                 f"{tol_class} class, positive {is_plus}, units {units}")
     nominal_dia = Decimal(nominal)
     if units not in ("in", "mm"):
         raise ValueError(f"Invalid units specified: {units}")
@@ -50,6 +73,7 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
     # tolerance classes for gauge pins have upper and lower bounds, if nominal dimension is outside
     # these bounds, return None
     elif (nominal_dia <= Decimal(".0010") or nominal_dia > Decimal("21.010")) and units == "in":
+        # TODO: refactor pin_tolerance_limits() so out-of-range generate descriptive exceptions
         return None
     elif (nominal_dia <= Decimal("0.254") or nominal_dia > Decimal("533.65")) and units == "mm":
         return None
@@ -211,7 +235,19 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
         tolerance_bounds = (nominal_dia, nominal_dia + tolerance)
     else:
         tolerance_bounds = (nominal_dia - tolerance, nominal_dia)
+    logging.info(f"Calculated pin tolerance bounds: {tolerance_bounds}")
     return tolerance_bounds
+
+
+def pin_size_wrapper(w_nominal: str, w_tol_class: str, w_is_plus: bool, w_units: str = "in"):
+    """wrap pin_tolerance_limits() with error handling for use in web gui"""
+    try:
+        result = pin_tolerance_limits(w_nominal, w_tol_class, w_is_plus, w_units)
+    except ValueError as e:
+        return {'result': None, 'error': str(e)}
+    if result is None:
+        return {'result': None, 'error': 'Diameter not within tolerance class limits'}
+    return {'result': result, 'error': None}
 
 
 def calculate_hole_size_limits(pin1: tuple, pin2: tuple, pin3: tuple, units: str):
@@ -250,7 +286,37 @@ def calculate_center_positions(pin1: float, pin2: float, pin3: float, hole_dia):
     pass
 
 
-def calculate_remaining_pin(hole_dia: float, pin1: float, pin2: float, ) -> float:
-    """From two pin sizes calculate the required third pin diameter to gauge hole diameter"""
-    # placeholder for planned functionality
-    pass
+def calculate_remaining_pin(bore_dia: str, pin1: str, pin2: str, ) -> dict:
+    """From two pin sizes calculate the required third pin diameter to gauge hole diameter, using
+    Descartes' Theorem. Exceptions raised by math errors are caught and passed to gui functions as
+    descriptive text.
+
+    Mathematically, it uses the Descartes theorem as in calculate_hole_size(), with one of the
+    "pin" values flipped to a negative sign to represent the enclosing tangent circle (bore dia)
+
+    :param bore_dia: String representing decimal diameter of bore, ex: "6.000"
+    :param pin1: String representing decimal diameter of first pin, ex: "2.000"
+    :param pin2: String representing decimal diameter of second pin, ex: "3.000"
+    :returns: Dictionary containing "result" and "error" keys. result value is a Decimal
+    object representing the diameter of the remaining pin. If an error occurs, error value is
+    descriptive math error text.
+    """
+
+    try:
+        neg_bore_dia = -1 * Decimal(bore_dia)
+        curvatures = [1/(Decimal(d) / 2) for d in (pin1, pin2, neg_bore_dia)]  # determine curvatures
+        result = descartes(curvatures[0], curvatures[1], curvatures[2])
+    except ZeroDivisionError as e:
+        # no pin diameter should be zero, if that occurs ZeroDivisionError is raised
+        logging.debug(str(e))
+        return {'result': None, 'error': 'Pin or bore dimension cannot be zero'}
+    except InvalidOperation as e:
+        # if something that the decimal library can't understand as a number is passed, this
+        # exception is raised
+        logging.debug(str(e))
+        return {'result': None, 'error': 'Cannot calculate pin dimension, check pin/bore diameters'}
+    if any([Decimal(bore_dia) < Decimal(d) for d in (pin1, pin2, result)]):
+        logging.debug(f"One of the pin diameters in {(pin1, pin2, result)} is greater than "
+                      f"the bore diameter {bore_dia}")
+        return {'result': None, 'error': 'Cannot calculate pin dimension, check pin/bore diameters'}
+    return {'result': result, 'error': None}
