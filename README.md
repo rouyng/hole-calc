@@ -20,8 +20,7 @@ Automated tests for the pytest framework are found in the `tests` subdirectory. 
 
 ## TODO:
 * Use html SVG rendering to draw the three input diameters and the output diameter. While hole calc can currently determine all these diameters, finding the formula to calculate relative position of the circle centers is difficult with my mediocre geometry skills. If you can assist with the geometry involved, please contact me!
-* "Reverse" mode, to determine the diameter of the remaining gage given a bore diameter and two other gage diameters. This could be useful if you want to make up a "GO/NOGO" set of gages for measuring a specific bore diameter.
-* A simple calculator that provides the dimensional limits for a pin gage of a given nominal diameter and tolerance class. This is already calculated on the backend for tolerance mode, but only the resulting bore diameter range is shown to the user. There are many other calculators and tables out there that do this, but it may be nice to have one integrated into hole calc to provide more information to the curious user.
+* Improve guide page to describe "reverse" and "gage size" calculators
 
 ## Contributing
 Bug reports, feature suggestions and code contributions are welcome. You may open an issue or pull request through GitHub or by contacting me directly through the contact information listed on my GitHub profile.
