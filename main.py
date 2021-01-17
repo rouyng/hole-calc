@@ -182,7 +182,7 @@ def reverse_calc_render():
             flash(calc_result['error'])
         else:
             formatted_result = str(calc_result['result'].quantize(Decimal(precision)))
-            logging.info(f"Calculated hole size in reverse mode: {formatted_result}")
+            logging.info(f"Calculated pin size in reverse mode: {formatted_result}")
             flash(f'Diameter: {formatted_result} {form_units}')
     return render_template('reverse.html',
                            form=form,
