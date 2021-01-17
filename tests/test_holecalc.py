@@ -169,7 +169,7 @@ class TestPinTolerance:
                      "Z": "0.00254",
                      "ZZ": "0.00508"}.items():
             for _ in range(0, 20):
-                test_dia = str(round(random.uniform(1.00, 21.00), 3))
+                test_dia = str(round(random.uniform(1.00, 20.95), 3))
                 pos_result = holecalc.pin_size_wrapper(test_dia, t, True, "mm")
                 desired_result = Decimal(test_dia) + Decimal(v)
                 precision = Decimal("0.00001")

@@ -63,7 +63,7 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
 
     Tolerance class information from ASME B89.1.5-1998
     """
-    logging.info(f"Calculating pin tolerance bounds: {nominal} dia, "
+    logging.debug(f"Calculating pin tolerance bounds: {nominal} dia, "
                  f"{tol_class} class, positive {is_plus}, units {units}")
     nominal_dia = Decimal(nominal)
     if units not in ("in", "mm"):
@@ -235,7 +235,7 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
         tolerance_bounds = (nominal_dia, nominal_dia + tolerance)
     else:
         tolerance_bounds = (nominal_dia - tolerance, nominal_dia)
-    logging.info(f"Calculated pin tolerance bounds: {tolerance_bounds}")
+    logging.debug(f"Calculated pin tolerance bounds: {tolerance_bounds}")
     return tolerance_bounds
 
 
@@ -244,8 +244,11 @@ def pin_size_wrapper(w_nominal: str, w_tol_class: str, w_is_plus: bool, w_units:
     try:
         result = pin_tolerance_limits(w_nominal, w_tol_class, w_is_plus, w_units)
     except ValueError as e:
+        logging.warning(f"ValueError when calculating pin tolerance limits: {str(e)}")
         return {'result': None, 'error': str(e)}
     if result is None:
+        logging.debug(f"{w_nominal} out of class tolerance class range, "
+                      f"could not calculate diameter")
         return {'result': None, 'error': 'Diameter not within tolerance class limits'}
     return {'result': result, 'error': None}
 
@@ -261,14 +264,17 @@ def calculate_hole_size_limits(pin1: tuple, pin2: tuple, pin3: tuple, units: str
     :param units: Str containing "in" or "mm", designating the units of measurement
     :return: Decimal minimum and maximum values of the hole measured by pins 1-3
     """
+    logging.debug("Attempting to calculate hole size limits")
     pin1_limits = pin_tolerance_limits(pin1[0], pin1[1], pin1[2], units)
     pin2_limits = pin_tolerance_limits(pin2[0], pin2[1], pin2[2], units)
     pin3_limits = pin_tolerance_limits(pin3[0], pin3[1], pin3[2], units)
     if None in (pin1_limits, pin2_limits, pin3_limits):
+        logging.debug(f"Calculating hole size limits failed due to pins out of class range")
         return {'result': None, 'error': 'Diameter over tolerance class limit, use nominal mode'}, \
                {'result': None, 'error': 'Diameter over tolerance class limit, use nominal mode'}
     min_hole = calculate_hole_size(pin1_limits[0], pin2_limits[0], pin3_limits[0])
     max_hole = calculate_hole_size(pin1_limits[1], pin2_limits[1], pin3_limits[1])
+    logging.debug(f"Calculated hole size limits, min: {min_hole} max: {max_hole}")
     return min_hole, max_hole
 
 
