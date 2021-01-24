@@ -4,7 +4,7 @@
 Hole calc is a simple web application that allows you to calculate the diameter of a bore from the size of three cylindrical pin gages that fit into it, using [Descartes' Theorem](https://en.wikipedia.org/wiki/Descartes%27_theorem). This functionality is useful for machinists and anyone else who needs a semi-precision method of measuring bore diameters without dedicated tools. See the [guide](https://holecalc.com/guide) for more info on how to use hole calc.
 
 ## Application structure
-The holecalc application is built with the [Flask](https://flask.palletsprojects.com/en/1.1.x/) web application microframework. [Flask-WTForms](https://flask-wtf.readthedocs.io/en/stable/) was used to build the form. The source code for the flask app is contained in `main.py`, while Flask templates reside in the `templates` subdirectory.
+The holecalc application is built with the [Flask](https://flask.palletsprojects.com/en/1.1.x/) web application microframework. [Flask-WTForms](https://flask-wtf.readthedocs.io/en/stable/) was used to build the calculator input forms. The source code for the flask app is contained in `main.py`, while Flask templates reside in the `templates` subdirectory.
 
 The holecalc module contains the backend code that runs the geometry calculations for the application's main functionality. This module also contains a couple placeholder functions that need to be completed for future planned features (see TODO section below).
 
@@ -17,6 +17,11 @@ Hole calc is developed and tested using Python 3.8. A pipfile is included for de
 The preferred way to build and deploy this application is via Docker, using the included Dockerfile. The base image used is `tiangolo/meinheld-gunicorn-flask:python3.8` ([docs](https://github.com/tiangolo/meinheld-gunicorn-flask-docker)).
 
 Automated tests for the pytest framework are found in the `tests` subdirectory. Tests and linting with flake8 are run via GitHub action on every push to the master branch of this repository.
+
+### Environment variables
+The following environment variables should be set during deployment:
+- FLASK_ENV: Use 'development', 'testing', or 'production'. Defaults to 'development' if not set.
+- SECRET_KEY: A secret key that will be used for securely signing the session cookie. Used for CSRF form validation. Not very important to guard against CSRF attacks currently, but this future proofs the app for potential added features.
 
 ## TODO:
 * Use html SVG rendering to draw the three input diameters and the output diameter. While hole calc can currently determine all these diameters, finding the formula to calculate relative position of the circle centers is difficult with my mediocre geometry skills. If you can assist with the geometry involved, please contact me!
