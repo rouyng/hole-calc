@@ -1,3 +1,5 @@
+"""Module containing flask routes for holecalc web app"""
+
 from flask import Flask, render_template, request, flash
 from holecalc import holecalc as hc
 from decimal import Decimal
@@ -32,16 +34,19 @@ def heartbeat():
 
 @app.route('/about/')
 def about():
+    """Route for about page"""
     return render_template('about.html')
 
 
 @app.route('/guide/')
 def guide():
+    """Route for guide page"""
     return render_template('guide.html')
 
 
 @app.route('/', methods=('GET', 'POST'))
 def three_pin_calc_render():
+    """Route for home page containing three pin calculator"""
     form = ThreePinForm()
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Three Pin']['selected'] = True
@@ -110,6 +115,7 @@ def three_pin_calc_render():
 
 @app.route('/pinsize', methods=('GET', 'POST'))
 def pin_calc_render():
+    """Route for pin size calculator"""
     form = PinSizeForm()
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Gage Size']['selected'] = True
@@ -156,6 +162,7 @@ def pin_calc_render():
 
 @app.route('/reverse', methods=('GET', 'POST'))
 def reverse_calc_render():
+    """Route for reverse/two pin calculator"""
     form = ReverseForm()
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Reverse']['selected'] = True

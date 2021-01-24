@@ -1,3 +1,6 @@
+"""Module containing functions used for math needed in hole calc, including descartes theorem and
+ other functions that wrap the descartes theorem calculation for different purposes"""
+
 from decimal import Decimal, getcontext, InvalidOperation
 import logging
 
