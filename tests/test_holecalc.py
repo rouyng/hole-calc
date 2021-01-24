@@ -4,9 +4,9 @@ Tests for the holecalc.py module
 The tests here are designed to unit test the math equations used for hole/pin size calculations
 """
 
-from .context import holecalc
+
 from holecalc import holecalc
-from decimal import Decimal, getcontext
+from decimal import Decimal
 import pytest
 import random
 import sys
@@ -188,17 +188,17 @@ class TestReversePin:
 
     def test_reverse_calculation_2(self):
         precision = Decimal("0.0001")
-        test_result = holecalc.calculate_remaining_pin(bore_dia="240.219", pin1="64.25", pin2="11.1")
+        test_result = holecalc.calculate_remaining_pin(bore_dia="240.219",
+                                                       pin1="64.25",
+                                                       pin2="11.1")
         assert test_result['result'].quantize(precision) == Decimal("25.3500")
 
     def test_reverse_invalid_bore(self):
-        precision = Decimal("0.0001")
         test_result = holecalc.calculate_remaining_pin(bore_dia="2", pin1="3", pin2="1")
         assert test_result['result'] is None
         assert test_result['error'] == "Cannot calculate pin dimension, check pin/bore diameters"
 
     def test_reverse_negative_value(self):
-        precision = Decimal("0.0001")
         test_result = holecalc.calculate_remaining_pin(bore_dia="6", pin1="-3", pin2="1")
         assert test_result['result'] is None
         assert test_result['error'] == "Cannot calculate pin dimension, check pin/bore diameters"

@@ -7,16 +7,30 @@ import logging
 from forms import ThreePinForm, ReverseForm, PinSizeForm
 from flask_wtf.csrf import CSRFProtect
 from wtforms import ValidationError
-from config import DevConfig
 import copy
+import os
 
 app = Flask(__name__)
-# import config settings (key) from config.py module
-app.config.from_object(DevConfig)
-# set CSRF protection globally on app
 csrf = CSRFProtect(app)
-# Set logging level to show INFO-level or higher
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+
+def load_config(mode=os.environ.get('FLASK_ENV')):
+    if mode == 'production':
+        logging.info("Loading production environment config")
+        from config import prod
+        app.config.from_object(prod)
+    elif mode == 'testing':
+        logging.info("Loading test environment config")
+        from config import test
+        app.config.from_object(test)
+    else:
+        logging.info("Loading development environment config")
+        from config import dev
+        app.config.from_object(dev)
+
+
+load_config()
+
 
 default_calc_menu = {"Three Pin": {'route': "/",
                                    'selected': False},
@@ -197,5 +211,5 @@ def reverse_calc_render():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
     app.run(debug=True)

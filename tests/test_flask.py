@@ -1,5 +1,5 @@
-from config import TestConfig
 from main import app as hc_app
+from main import load_config
 import pytest
 
 """
@@ -12,13 +12,17 @@ These tests are integration tests of the user-accessible functionality exposed b
 @pytest.fixture
 def flask_app():
     app = hc_app
-    app.config.from_object(TestConfig)
+    load_config("testing")
     yield app
 
 
 @pytest.fixture
 def client(flask_app):
     return flask_app.test_client()
+
+
+def test_environment(flask_app):
+    assert flask_app.config['TESTING'] is True
 
 
 def test_heartbeat(flask_app, client):
@@ -77,4 +81,3 @@ def test_pin_size_calculation_mm(flask_app, client):
     response = client.post('/pinsize', data=post_data)
     assert b"64.9898" in response.data
     assert b"65.0000" in response.data
-
