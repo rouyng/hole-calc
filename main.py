@@ -1,3 +1,5 @@
+"""Module containing flask routes for holecalc web app"""
+
 from flask import Flask, render_template, request, flash
 from holecalc import holecalc as hc
 from decimal import Decimal
@@ -5,16 +7,30 @@ import logging
 from forms import ThreePinForm, ReverseForm, PinSizeForm
 from flask_wtf.csrf import CSRFProtect
 from wtforms import ValidationError
-from config import DevConfig
 import copy
+import os
 
 app = Flask(__name__)
-# import config settings (key) from config.py module
-app.config.from_object(DevConfig)
-# set CSRF protection globally on app
 csrf = CSRFProtect(app)
-# Set logging level to show INFO-level or higher
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+
+def load_config(mode=os.environ.get('FLASK_ENV')):
+    if mode == 'production':
+        logging.info("Loading production environment config")
+        from config import prod
+        app.config.from_object(prod)
+    elif mode == 'testing':
+        logging.info("Loading test environment config")
+        from config import test
+        app.config.from_object(test)
+    else:
+        logging.info("Loading development environment config")
+        from config import dev
+        app.config.from_object(dev)
+
+
+load_config()
+
 
 default_calc_menu = {"Three Pin": {'route': "/",
                                    'selected': False},
@@ -32,16 +48,19 @@ def heartbeat():
 
 @app.route('/about/')
 def about():
+    """Route for about page"""
     return render_template('about.html')
 
 
 @app.route('/guide/')
 def guide():
+    """Route for guide page"""
     return render_template('guide.html')
 
 
 @app.route('/', methods=('GET', 'POST'))
 def three_pin_calc_render():
+    """Route for home page containing three pin calculator"""
     form = ThreePinForm()
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Three Pin']['selected'] = True
@@ -110,6 +129,7 @@ def three_pin_calc_render():
 
 @app.route('/pinsize', methods=('GET', 'POST'))
 def pin_calc_render():
+    """Route for pin size calculator"""
     form = PinSizeForm()
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Gage Size']['selected'] = True
@@ -156,6 +176,7 @@ def pin_calc_render():
 
 @app.route('/reverse', methods=('GET', 'POST'))
 def reverse_calc_render():
+    """Route for reverse/two pin calculator"""
     form = ReverseForm()
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Reverse']['selected'] = True
@@ -190,5 +211,5 @@ def reverse_calc_render():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
     app.run(debug=True)

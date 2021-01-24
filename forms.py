@@ -1,18 +1,26 @@
+"""Module that defines forms used in hole calc's three pin, reverse and pin size calculators.
+ Forms are composed here using WTForms and Flask-WTF"""
+
 from flask_wtf import FlaskForm
 from wtforms import DecimalField, RadioField, SelectField, SubmitField
 from wtforms.validators import DataRequired, NumberRange
 
 
 class PinSizeDecimal(DecimalField):
+    """Defines pin gage diameter input fields"""
     def __init__(self, pin_number: int, **kwargs):
         super().__init__(
             label=f'Pin {pin_number}',
-            validators=[DataRequired(), NumberRange(min=0.00001, max=9999, message="Input value must be at least %(min)s")],
+            validators=[DataRequired(),
+                        NumberRange(min=0.00001,
+                                    max=9999,
+                                    message="Input value must be at least %(min)s")],
             **kwargs
         )
 
 
 class PinClassSelect(SelectField):
+    """Defines drop-down selection fields for pin gage tolerance classes"""
     def __init__(self, pin_number: int, **kwargs):
         super().__init__(
             label=f'Pin {pin_number} Class',
@@ -30,12 +38,7 @@ class PinClassSelect(SelectField):
 
 
 class PinSignSelect(SelectField):
-    """
-    Choose whether the pin tolerance
-     class sign is positive (True) or
-     negative (False)
-     """
-
+    """Defines drop-down selection fields for pin gage class sign (plus or minus)"""
     def __init__(self, pin_number: int, **kwargs):
         super().__init__(
             label=f'Pin {pin_number} Sign',
@@ -49,8 +52,7 @@ class PinSignSelect(SelectField):
 
 
 class ThreePinForm(FlaskForm):
-    """Defines the 3-pin hole measuring form"""
-
+    """Defines input form for three pin bore diameter calculator"""
     tol_radio = RadioField(
         label='Tolerance',
         choices=[
@@ -89,6 +91,7 @@ class ThreePinForm(FlaskForm):
 
 
 class ReverseForm(FlaskForm):
+    """Defines input form for two pin/reverse calculator"""
     pin1 = PinSizeDecimal(1)
     pin2 = PinSizeDecimal(2)
     bore = DecimalField(label='Bore', validators=[DataRequired()])
@@ -113,6 +116,7 @@ class ReverseForm(FlaskForm):
 
 
 class PinSizeForm(FlaskForm):
+    """Defines input form for gage pin diameter calculator"""
     pin_dia = PinSizeDecimal(1)
     pin_class = PinClassSelect(1)
     pin_sign = PinSignSelect(1)
