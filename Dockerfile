@@ -10,4 +10,5 @@ RUN pip install -r requirements.txt
 COPY holecalc holecalc
 COPY templates templates
 COPY static static
-COPY main.py config.py forms.py ./
+COPY config config
+COPY main.py forms.py ./
