@@ -3,7 +3,7 @@
 
 from decimal import Decimal, getcontext, InvalidOperation
 import logging
-
+from math import acos, cos, radians, degrees, sqrt
 
 # set precision for decimal math
 getcontext().prec = 12
@@ -43,7 +43,7 @@ def calculate_hole_size(pin1: str, pin2: str, pin3: str) -> dict:
     descriptive math error text.
     """
     try:
-        curvatures = [1/(Decimal(d) / 2) for d in (pin1, pin2, pin3)]  # determine curvatures
+        curvatures = [1 / (Decimal(d) / 2) for d in (pin1, pin2, pin3)]  # determine curvatures
         result = descartes(curvatures[0], curvatures[1], curvatures[2])
     except ZeroDivisionError as e:
         # no pin diameter should be zero, if that occurs ZeroDivisionError is raised
@@ -67,7 +67,7 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
     Tolerance class information from ASME B89.1.5-1998
     """
     logging.debug(f"Calculating pin tolerance bounds: {nominal} dia, "
-                 f"{tol_class} class, positive {is_plus}, units {units}")
+                  f"{tol_class} class, positive {is_plus}, units {units}")
     nominal_dia = Decimal(nominal)
     if units not in ("in", "mm"):
         raise ValueError(f"Invalid units specified: {units}")
@@ -281,7 +281,7 @@ def calculate_hole_size_limits(pin1: tuple, pin2: tuple, pin3: tuple, units: str
     return min_hole, max_hole
 
 
-def calculate_center_positions(pin1: float, pin2: float, pin3: float, hole_dia):
+def calculate_center_positions(pin1: float, pin2: float, pin3: float, hole_dia) -> tuple:
     """
     From three known tangent circle diameters (representing pins in a hole),
     calculate the x,y coordinates of each circle center relative to the center 0,0
@@ -291,8 +291,43 @@ def calculate_center_positions(pin1: float, pin2: float, pin3: float, hole_dia):
     pins within the hole being measured. Need to figure out the geometry first before I can
     complete it, though!
     """
-    # placeholder for planned functionality
-    pass
+
+    def sec(x):
+        return 1 / (cos(x))
+
+    ab = pin1 / 2 + pin2 / 2
+    bc = pin2 / 2 + pin3 / 2
+    ca = pin3 / 2 + pin1 / 2
+    # find angles A, B, C
+    angle_a = degrees(acos((ab ** 2 + bc ** 2 - ca ** 2)
+                           / (2 * ab * bc)))
+    angle_b = degrees(acos((ca ** 2 + bc ** 2 - ab ** 2)
+                           / (2 * ca * bc)))
+    angle_c = degrees(acos((ca ** 2 + ab ** 2 - bc ** 2)
+                           / (2 * ca * ab)))
+    s = (ab + bc + ca) / 2
+    area = sqrt(s * (s - ab) * (s - bc) * (s - ca))
+    # find the trilinear coordinates of the isoperimetric center
+    A = sec(angle_a / 2) * cos(angle_b / 2) * cos(angle_c / 2) - 1
+    B = sec(angle_b / 2) * cos(angle_c / 2) * cos(angle_a / 2) - 1
+    C = sec(angle_c / 2) * cos(angle_a / 2) * cos(angle_b / 2) - 1
+    coords = (A, B, C)
+    r = (2 * area) / (ab + bc + ca)
+    k = (2 * area) / (ab * B + bc * B + ca * C)
+
+    # possibly helpful references
+    # https://mathworld.wolfram.com/ExactTrilinearCoordinates.html
+    # https://mathworld.wolfram.com/TrilinearCoordinates.html
+    # https://mathworld.wolfram.com/IsoperimetricPoint.html
+    # https://mathworld.wolfram.com/TriangleCenterFunction.html
+    # https://faculty.evansville.edu/ck6/tcenters/trilin.html
+    # https://faculty.evansville.edu/ck6/tcenters/recent/isoper.html
+    # https://archive.lib.msu.edu/crcmath/math/math/i/i268.htm
+    # https://archive.lib.msu.edu/crcmath/math/math/t/t361.htm
+
+
+    x1, x2, x3, y1, y2, y3 = None
+    return (x1, y1), (x2, y2), (x3, y3)
 
 
 def calculate_remaining_pin(bore_dia: str, pin1: str, pin2: str, ) -> dict:
@@ -313,7 +348,8 @@ def calculate_remaining_pin(bore_dia: str, pin1: str, pin2: str, ) -> dict:
 
     try:
         neg_bore_dia = -1 * Decimal(bore_dia)
-        curvatures = [1/(Decimal(d) / 2) for d in (pin1, pin2, neg_bore_dia)]  # determine curvatures
+        curvatures = [1 / (Decimal(d) / 2) for d in
+                      (pin1, pin2, neg_bore_dia)]  # determine curvatures
         result = descartes(curvatures[0], curvatures[1], curvatures[2])
     except ZeroDivisionError as e:
         # no pin diameter should be zero, if that occurs ZeroDivisionError is raised
