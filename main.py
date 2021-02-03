@@ -225,6 +225,7 @@ def page_not_found(e):
 @app.errorhandler(500)
 def page_not_found(e):
     """Render 500 internal server error template"""
+    logging.warning("A 500 internal server error was generated")
     return render_template('500.html'), 500
 
 
