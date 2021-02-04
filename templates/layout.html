@@ -1,51 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Hole gauging calculator">
-    <style type="text/css">
-      @import url("/static/pure-min.css");
-      @import url("/static/grids-responsive-min.css");
-      @import url("/static/styles.css");
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, shrink-to-fit=no">
+    <meta name="description" content="Hole calc provides calculators to help machinists, craftspeople, engineers and
+    designers measure any bore diameter using three gage pins.">
+    <!-- Apple web app meta tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <!-- end Apple web app meta tags -->
+    <style>
+        @import url("/static/pure-min.css");
+        @import url("/static/grids-responsive-min.css");
+        @import url("/static/styles.css");
     </style>
-    <link rel="preload" href="/static/fonts/SpaceGrotesk[wght].woff2" as="font" type="font/woff2" crossorigin="" />
+    <link rel="preload" href="/static/fonts/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin=""/>
+    <link rel="preload" href="/static/custom.js">
     <!-- ****** faviconit.com favicons ****** -->
-	<link rel="shortcut icon" href="/static/favicons/favicon.ico">
-	<link rel="icon" sizes="16x16 32x32 64x64" href="/static/favicons/favicon.ico">
-	<link rel="icon" type="image/png" sizes="196x196" href="/static/favicons/favicon-192.png">
-	<link rel="icon" type="image/png" sizes="160x160" href="/static/favicons/favicon-160.png">
-	<link rel="icon" type="image/png" sizes="96x96" href="/static/favicons/favicon-96.png">
-	<link rel="icon" type="image/png" sizes="64x64" href="/static/favicons/favicon-64.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16.png">
-	<link rel="apple-touch-icon" href="/static/favicons/favicon-57.png">
-	<link rel="apple-touch-icon" sizes="114x114" href="/static/favicons/favicon-114.png">
-	<link rel="apple-touch-icon" sizes="72x72" href="/static/favicons/favicon-72.png">
-	<link rel="apple-touch-icon" sizes="144x144" href="/static/favicons/favicon-144.png">
-	<link rel="apple-touch-icon" sizes="60x60" href="/static/favicons/favicon-60.png">
-	<link rel="apple-touch-icon" sizes="120x120" href="/static/favicons/favicon-120.png">
-	<link rel="apple-touch-icon" sizes="76x76" href="/static/favicons/favicon-76.png">
-	<link rel="apple-touch-icon" sizes="152x152" href="/static/favicons/favicon-152.png">
-	<link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/favicon-180.png">
-	<meta name="msapplication-TileColor" content="#FFFFFF">
-	<meta name="msapplication-TileImage" content="/static/favicons/favicon-144.png">
-	<meta name="msapplication-config" content="/static/favicons/browserconfig.xml">
-	<!-- ****** faviconit.com favicons ****** -->
-    <title>Hole Calc</title>
+    <link rel="shortcut icon" href="/static/favicons/favicon.ico">
+    <link rel="icon" sizes="16x16 32x32 64x64" href="/static/favicons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="/static/favicons/favicon-192.png">
+    <link rel="icon" type="image/png" sizes="160x160" href="/static/favicons/favicon-160.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/favicons/favicon-96.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="/static/favicons/favicon-64.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16.png">
+    <link rel="apple-touch-icon" href="/static/favicons/favicon-57.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/static/favicons/favicon-114.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/static/favicons/favicon-72.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/static/favicons/favicon-144.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/static/favicons/favicon-60.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/static/favicons/favicon-120.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/favicons/favicon-76.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/favicons/favicon-152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/favicon-180.png">
+    <meta name="msapplication-TileColor" content="#FFFFFF">
+    <meta name="msapplication-TileImage" content="/static/favicons/favicon-144.png">
+    <meta name="msapplication-config" content="/static/favicons/browserconfig.xml">
+    <!-- ****** faviconit.com favicons ****** -->
+    <title>Hole Calc - Measure Bores with Three Pins</title>
     <script src="/static/custom.js"></script>
 </head>
 <body>
-
-<div class="header">
-    <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
-        <a class="pure-menu-heading" href="/">HOLE CALC</a>
-        <ul class="pure-menu-list">
-            <li class="pure-menu-item"><a class="pure-menu-link" href="/guide/" >Guide</a></li>
-            <li class="pure-menu-item"><a class="pure-menu-link" href="/about/">About</a></li>
-        </ul>
+<header>
+    <div class="header">
+        <nav>
+            <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+                <a class="pure-menu-heading" href="/">HOLE CALC</a>
+                <ul class="pure-menu-list">
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="/guide/">Guide</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="/about/">About</a></li>
+                </ul>
+            </div>
+        </nav>
     </div>
-</div>
+</header>
 {% block content %}{% endblock %}
 </body>
 </html>

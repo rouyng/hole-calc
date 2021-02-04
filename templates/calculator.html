@@ -2,29 +2,40 @@
 {% block content %}
     <div class="content-wrapper">
         <div class="content">
-            <div class="pure-u-1">
-                <br>
-                <p>Hole calc provides calculators to help measure bores with gage pins. Questions? <a href="/guide/">Read the guide</a></p>
-                <br>
-            </div>
+            <header>
+                <div class="pure-u-1">
+                    <br>
+                    <h1 class="content-subhead">Calculators for measuring bores</h1>
+                    <p>Hole calc provides calculators to help machinists, craftspeople, engineers and
+                        designers measure any bore diameter using three gage pins, or any other cylinders of known
+                        diameter. Questions? <a href="/guide/">Read the guide</a>
+                    </p>
+                    <br>
+                </div>
+            </header>
             {# Calculators tab menu #}
-            <div class="pure-menu pure-menu-horizontal calc-menu">
-                <ul class="pure-menu-list">
-                    {% for label, values in calc_menu.items() %}
-                        <li class="pure-menu-item{% if values['selected'] %} pure-menu-selected{% endif %}">
-                            <a href="{{ values['route'] }}" class="pure-menu-link">{{ label }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            <div class="pure-g">
-                {% block threepin %}
-                {% endblock %}
-                {% block reverse %}
-                {% endblock %}
-                {% block pinsize %}
-                {% endblock %}
-            </div>
+            <nav>
+                <div class="pure-menu pure-menu-horizontal calc-menu">
+                    <ul class="pure-menu-list">
+                        {% for label, values in calc_menu.items() %}
+                            <li class="pure-menu-item{% if values['selected'] %} pure-menu-selected{% endif %}">
+                                <a href="{{ values['route'] }}" class="pure-menu-link">{{ label }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </nav>
+            <main>
+                <div class="pure-g">
+                    {% block threepin %}
+                    {% endblock %}
+                    {% block reverse %}
+                    {% endblock %}
+                    {% block pinsize %}
+                    {% endblock %}
+                </div>
+            </main>
         </div>
     </div>
+
 {% endblock content %}
