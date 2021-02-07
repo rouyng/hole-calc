@@ -143,8 +143,9 @@ def pin_calc_render():
             logging.warning("Form validation failed")
             flash('Form validation failed')
             rendered = render_template(
-                'reverse.html',
-                form=form
+                'pinsize.html',
+                form=form,
+                calc_menu=calc_menu
             )
             return html_minify(rendered)
         else:
