@@ -201,6 +201,7 @@ tr {
 .calc-menu .pure-menu-item {
     background-color: var(--light-accent);
     border-radius: 3px 3px 0 0;
+    margin-right: 4px
 }
 
 .calc-menu .pure-menu-selected {
@@ -223,5 +224,9 @@ tr {
 .calc-menu .pure-menu-selected .pure-menu-link:hover {
     background-color: var(--dark-accent);
 
+}
+
+input[name="tol_radio"] {
+    margin-left: 6px;
 }
 
