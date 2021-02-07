@@ -46,21 +46,7 @@
                     <legend>Results</legend>
                 </fieldset>
             </form>
-            <table class="pure-table pure-table-horizontal">
-                <tbody>
-                    {% with messages = get_flashed_messages() %}
-                        {% if messages %}
-                            {% for message in messages %}
-                                <tr>
-                                    {% for item in message.split(':') %}
-                                        <td>{{ item }}</td>
-                                    {% endfor %}
-                                </tr>
-                            {% endfor %}
-                        {% endif %}
-                    {% endwith %}
-                </tbody>
-            </table>
+            {% include "partials/results.html" %}
         </div>
     </div>
 {% endblock %}

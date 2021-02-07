@@ -1,0 +1,14 @@
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="pure-u-1">
+                {% if message.split(':')[1] %}
+                    <div class="pure-u-1-2"><b>{{ message.split(':')[0] }}</b></div>
+                    <div class="pure-u-1-2">{{ message.split(':')[1] }}</div>
+                {% else %}
+                    <div class="pure-u-1"><p class="result-error">{{ message.split(':')[0] }}</p></div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}

@@ -144,7 +144,8 @@ tr {
 }
 
 .result-error {
-    color: var(--error-accent)
+    color: var(--error-accent);
+    font-weight: bold;
 }
 
 .home-menu {
