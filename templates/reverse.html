@@ -53,7 +53,10 @@
                     <legend>Results</legend>
                 </fieldset>
             </form>
-            {% include "partials/results.html" %}
+            {% with messages = get_flashed_messages() %}
+                {% include "partials/results.html" %}
+                {% include "partials/reversediagram.html" %}
+            {% endwith %}
         </div>
     </div>
 {% endblock %}
