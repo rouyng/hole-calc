@@ -97,7 +97,7 @@ def three_pin_calc_render():
                     raise ValueError(calc_result['error'])
                 formatted_result = str(calc_result['result'].quantize(Decimal(precision)))
                 logging.info(f"Calculated hole size in nominal mode: {formatted_result}")
-                flash('Diameter: ' + formatted_result)
+                flash(f'Bore diameter: {formatted_result} {form_units}')
             except (TypeError, ValueError) as e:
                 logging.info(f"Calculation error generated during hole size calculation: {str(e)}")
                 flash(str(e))
@@ -120,8 +120,8 @@ def three_pin_calc_render():
                 min_result = str(min(result_values))
                 logging.info(f"Calculated hole size in tolerance mode, min: {min_result}, "
                              f"max: {max_result}")
-                flash(f'Min diameter: {min_result} {form_units}')
-                flash(f'Max diameter: {max_result} {form_units}')
+                flash(f'Min bore diameter: {min_result} {form_units}')
+                flash(f'Max bore diameter: {max_result} {form_units}')
             except (TypeError, ValueError) as e:
                 logging.info(f"Calculation error generated during hole size calculation: {str(e)}")
                 flash(str(e))
@@ -172,8 +172,8 @@ def pin_calc_render():
                 min_result = str(min(result_values))
                 max_result = str(max(result_values))
                 logging.info(f"Calculated pin size, min: {min_result} max: {max_result}")
-                flash(f'Min gage diameter: {min_result} {form_units}')
                 flash(f'Max gage diameter: {max_result} {form_units}')
+                flash(f'Min gage diameter: {min_result} {form_units}')
     rendered = render_template('pinsize.html',
                            form=form,
                            calc_menu=calc_menu)
@@ -211,7 +211,7 @@ def reverse_calc_render():
         else:
             formatted_result = str(calc_result['result'].quantize(Decimal(precision)))
             logging.info(f"Calculated pin size in reverse mode: {formatted_result}")
-            flash(f'Diameter: {formatted_result} {form_units}')
+            flash(f'Gage diameter: {formatted_result} {form_units}')
     rendered = render_template('reverse.html',
                            form=form,
                            calc_menu=calc_menu)

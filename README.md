@@ -24,7 +24,7 @@ The following environment variables should be set during deployment:
 - SECRET_KEY: A secret key that will be used for securely signing the session cookie. Used for CSRF form validation. Not very important to guard against CSRF attacks currently, but this future proofs the app for potential added features.
 
 ## TODO:
-* Use html SVG rendering to draw the three input diameters and the output diameter. While hole calc can currently determine all these diameters, finding the formula to calculate relative position of the circle centers is difficult with my mediocre geometry skills. If you can assist with the geometry involved, please contact me!
+* Use html SVG rendering to draw the three input diameters and the output diameter. This would replace the current generic diagrams with dynamic ones that draw the relative diameters inputted into/calculated by the three pin and reverse calculators. While hole calc can currently determine all these diameters, finding the formula to calculate relative position of the circle centers is difficult with my mediocre geometry skills. If you can assist with the geometry involved, please contact me!
 
 ## Contributing
 Bug reports, feature suggestions and code contributions are welcome. You may open an issue or pull request through GitHub or by contacting me directly through the contact information listed on my GitHub profile.
