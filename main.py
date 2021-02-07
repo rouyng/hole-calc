@@ -9,6 +9,7 @@ from flask_wtf.csrf import CSRFProtect
 from wtforms import ValidationError
 import copy
 import os
+from htmlmin.minify import html_minify
 
 app = Flask(__name__)
 csrf = CSRFProtect(app)
@@ -31,7 +32,6 @@ def load_config(mode=os.environ.get('FLASK_ENV')):
 
 load_config()
 
-
 default_calc_menu = {"Three Pin": {'route': "/",
                                    'selected': False},
                      "Reverse": {'route': "/reverse",
@@ -49,13 +49,15 @@ def heartbeat():
 @app.route('/about/')
 def about():
     """Route for about page"""
-    return render_template('about.html')
+    rendered = render_template('about.html')
+    return html_minify(rendered)
 
 
 @app.route('/guide/')
 def guide():
     """Route for guide page"""
-    return render_template('guide.html')
+    rendered = render_template('guide.html')
+    return html_minify(rendered)
 
 
 @app.route('/', methods=('GET', 'POST'))
@@ -69,11 +71,12 @@ def three_pin_calc_render():
         if not form.validate_on_submit():
             flash('Form validation failed')
             logging.warning("Form validation failed")
-            return render_template(
+            rendered = render_template(
                 'threepin.html',
                 form=form,
                 calc_menu=calc_menu
             )
+            return html_minify(rendered)
         form_units = form.units.data
         precision = form.precision.data
         pin1 = form.pin1.data
@@ -122,9 +125,10 @@ def three_pin_calc_render():
             except (TypeError, ValueError) as e:
                 logging.info(f"Calculation error generated during hole size calculation: {str(e)}")
                 flash(str(e))
-    return render_template('threepin.html',
-                           form=form,
-                           calc_menu=calc_menu)
+    rendered = render_template('threepin.html',
+                               form=form,
+                               calc_menu=calc_menu)
+    return html_minify(rendered)
 
 
 @app.route('/pinsize', methods=('GET', 'POST'))
@@ -138,10 +142,11 @@ def pin_calc_render():
         if not form.validate_on_submit():
             logging.warning("Form validation failed")
             flash('Form validation failed')
-            return render_template(
+            rendered = render_template(
                 'reverse.html',
                 form=form
             )
+            return html_minify(rendered)
         else:
             form_units = form.units.data
             pin_dia = form.pin_dia.data
@@ -169,9 +174,10 @@ def pin_calc_render():
                 logging.info(f"Calculated pin size, min: {min_result} max: {max_result}")
                 flash(f'Min gage diameter: {min_result} {form_units}')
                 flash(f'Max gage diameter: {max_result} {form_units}')
-    return render_template('pinsize.html',
+    rendered = render_template('pinsize.html',
                            form=form,
                            calc_menu=calc_menu)
+    return html_minify(rendered)
 
 
 @app.route('/reverse', methods=('GET', 'POST'))
@@ -187,10 +193,11 @@ def reverse_calc_render():
         except ValidationError as e:
             logging.warning(f"Form validation failed: {e}")
             flash(str(e))
-            return render_template(
+            rendered = render_template(
                 'reverse.html',
                 form=form,
                 calc_menu=calc_menu)
+            return html_minify(rendered)
         form_units = form.units.data
         precision = form.precision.data
         pin1 = form.pin1.data
@@ -205,30 +212,33 @@ def reverse_calc_render():
             formatted_result = str(calc_result['result'].quantize(Decimal(precision)))
             logging.info(f"Calculated pin size in reverse mode: {formatted_result}")
             flash(f'Diameter: {formatted_result} {form_units}')
-    return render_template('reverse.html',
+    rendered = render_template('reverse.html',
                            form=form,
                            calc_menu=calc_menu)
+    return html_minify(rendered)
 
 
 @app.errorhandler(404)
 def page_not_found(e):
     """Render 404 page not found template"""
-    return render_template('404.html'), 404
+    rendered = render_template('404.html')
+    return rendered, 404
 
 
 @app.errorhandler(403)
 def page_not_found(e):
     """Render 403 forbidden template"""
-    return render_template('403.html'), 403
+    rendered = render_template('403.html')
+    return rendered, 403
 
 
 @app.errorhandler(500)
 def page_not_found(e):
     """Render 500 internal server error template"""
     logging.warning("A 500 internal server error was generated")
-    return render_template('500.html'), 500
+    rendered = render_template('500.html')
+    return rendered, 500
 
 
 if __name__ == '__main__':
-
     app.run(debug=True)
