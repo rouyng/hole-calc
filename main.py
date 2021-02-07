@@ -172,8 +172,8 @@ def pin_calc_render():
                 min_result = str(min(result_values))
                 max_result = str(max(result_values))
                 logging.info(f"Calculated pin size, min: {min_result} max: {max_result}")
-                flash(f'Min gage diameter: {min_result} {form_units}')
                 flash(f'Max gage diameter: {max_result} {form_units}')
+                flash(f'Min gage diameter: {min_result} {form_units}')
     rendered = render_template('pinsize.html',
                            form=form,
                            calc_menu=calc_menu)
