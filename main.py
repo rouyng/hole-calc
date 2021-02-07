@@ -97,7 +97,7 @@ def three_pin_calc_render():
                     raise ValueError(calc_result['error'])
                 formatted_result = str(calc_result['result'].quantize(Decimal(precision)))
                 logging.info(f"Calculated hole size in nominal mode: {formatted_result}")
-                flash('Diameter: ' + formatted_result)
+                flash(f'Diameter: {formatted_result} {form_units}')
             except (TypeError, ValueError) as e:
                 logging.info(f"Calculation error generated during hole size calculation: {str(e)}")
                 flash(str(e))
