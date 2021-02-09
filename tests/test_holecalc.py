@@ -35,7 +35,7 @@ class TestHoleSizeCalculation:
 
     def test_zero_input(self):
         assert holecalc.calculate_hole_size("0", "1", "2") == \
-               {'result': None, 'error': 'Pin dimension cannot be zero'}
+               {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
 
     def test_invalid_input(self):
         assert holecalc.calculate_hole_size("50", "1", "0.01") == \
@@ -43,6 +43,10 @@ class TestHoleSizeCalculation:
 
     def test_invalid_input_2(self):
         assert holecalc.calculate_hole_size("1", "1", "0.16") == \
+               {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
+
+    def test_invalid_input_3(self):
+        assert holecalc.calculate_hole_size("1", "1", "0.25") == \
                {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
 
     def test_tolerance_hole_measurement_in(self):
