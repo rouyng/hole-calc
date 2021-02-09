@@ -27,7 +27,8 @@ def descartes(k1: Decimal, k2: Decimal, k3: Decimal) -> Decimal:
     1, 2 and 3.
     """
     radius = 1 / (sum((k1, k2, k3)) - 2 * (k1 * k2 + k2 * k3 + k1 * k3).sqrt())
-    return abs(radius * 2)
+    logging.debug(f"Descartes radius: {radius}")
+    return radius * 2
 
 
 def calculate_hole_size(pin1: str, pin2: str, pin3: str) -> dict:
@@ -54,10 +55,10 @@ def calculate_hole_size(pin1: str, pin2: str, pin3: str) -> dict:
         # exception is raised
         logging.debug(str(e))
         return {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
-    if any([result < Decimal(d) for d in (pin1, pin2, pin3)]):
-        logging.debug(f"{result} is less than one diameter in {(pin1, pin2, pin3)}")
+    if result > 0:
+        logging.debug(f"Descartes theorem returned a positive value for {(pin1, pin2, pin3)}")
         return {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
-    return {'result': result, 'error': None}
+    return {'result': abs(result), 'error': None}
 
 
 def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str = "in"):
@@ -324,8 +325,7 @@ def calculate_remaining_pin(bore_dia: str, pin1: str, pin2: str, ) -> dict:
         # exception is raised
         logging.debug(str(e))
         return {'result': None, 'error': 'Cannot calculate pin dimension, check pin/bore diameters'}
-    if any([Decimal(bore_dia) < Decimal(d) for d in (pin1, pin2, result)]):
-        logging.debug(f"One of the pin diameters in {(pin1, pin2, result)} is greater than "
-                      f"the bore diameter {bore_dia}")
+    if result < 0:
+        logging.debug(f"Descartes theorem returned a positive value for {(pin1, pin2, bore_dia)}")
         return {'result': None, 'error': 'Cannot calculate pin dimension, check pin/bore diameters'}
     return {'result': result, 'error': None}
