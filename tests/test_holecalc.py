@@ -41,6 +41,10 @@ class TestHoleSizeCalculation:
         assert holecalc.calculate_hole_size("50", "1", "0.01") == \
                {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
 
+    def test_invalid_input_2(self):
+        assert holecalc.calculate_hole_size("1", "1", "0.16") == \
+               {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
+
     def test_tolerance_hole_measurement_in(self):
         results = holecalc.calculate_hole_size_limits(
             ("1.000", "ZZ", True),
@@ -77,10 +81,10 @@ class TestPinTolerance:
 
     def test_in_small_tolerances(self):
         for t, v in {"XX": "0.000020",
-                     "X": "0.00004",
-                     "Y": "0.00007",
-                     "Z": "0.0001",
-                     "ZZ": "0.0002"}.items():
+                     "X": "0.000040",
+                     "Y": "0.000070",
+                     "Z": "0.000100",
+                     "ZZ": "0.000200"}.items():
             for _ in range(0, 20):
                 test_dia = str(round(random.uniform(.0009, .8250), 4))
                 pos_result = holecalc.pin_tolerance_limits(test_dia, t, True, units="in")
@@ -195,6 +199,11 @@ class TestReversePin:
 
     def test_reverse_invalid_bore(self):
         test_result = holecalc.calculate_remaining_pin(bore_dia="2", pin1="3", pin2="1")
+        assert test_result['result'] is None
+        assert test_result['error'] == "Cannot calculate pin dimension, check pin/bore diameters"
+
+    def test_reverse_invalid_bore_2(self):
+        test_result = holecalc.calculate_remaining_pin(bore_dia="1.109", pin1="1", pin2="1")
         assert test_result['result'] is None
         assert test_result['error'] == "Cannot calculate pin dimension, check pin/bore diameters"
 
