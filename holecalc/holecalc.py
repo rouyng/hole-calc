@@ -49,7 +49,8 @@ def calculate_hole_size(pin1: str, pin2: str, pin3: str) -> dict:
     except ZeroDivisionError as e:
         # no pin diameter should be zero, if that occurs ZeroDivisionError is raised
         logging.debug(str(e))
-        return {'result': None, 'error': 'Pin dimension cannot be zero'}
+        logging.info("Zero division error")
+        return {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
     except InvalidOperation as e:
         # if something that the decimal library can't understand as a number is passed, this
         # exception is raised
