@@ -67,7 +67,7 @@ def three_pin_calc_render():
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Three Pin']['selected'] = True
     if request.method == 'POST':
-        logging.info("POST request from user on three pin calculator")
+        logging.info(f"Remote IP {request.environ['REMOTE_ADDR']} POST request on three pin calculator")
         if not form.validate_on_submit():
             flash('Form validation failed')
             logging.warning("Form validation failed")
@@ -138,7 +138,7 @@ def pin_calc_render():
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Gage Size']['selected'] = True
     if request.method == 'POST':
-        logging.info("POST request from user on pin size calculator")
+        logging.info(f"Remote IP {request.environ['REMOTE_ADDR']} POST request on pin size calculator")
         if not form.validate_on_submit():
             logging.warning("Form validation failed")
             flash('Form validation failed')
@@ -188,7 +188,7 @@ def reverse_calc_render():
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Reverse']['selected'] = True
     if request.method == 'POST':
-        logging.info("POST request from user on reverse calculator")
+        logging.info(f"Remote IP {request.environ['REMOTE_ADDR']} POST request on reverse calculator")
         try:
             form.validate()
         except ValidationError as e:
