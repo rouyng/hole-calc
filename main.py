@@ -30,6 +30,16 @@ def load_config(mode=os.environ.get('FLASK_ENV')):
         app.config.from_object(dev)
 
 
+def log_remote_ip():
+    """Log remote IP, used for POST requests on calculator forms."""
+    if "HTTP_X_FORWARDED_FOR" in request.environ.keys():
+        # NGNIX uses this header when proxying requests
+        logging.info("Remote IP: " + request.environ['HTTP_X_FORWARDED_FOR'])
+    else:
+        # for local development, or if another proxy is used that doesn't provide the header HTTP_X_FORWARDED_FOR
+        logging.info("Remote IP: " + request.remote_addr)
+
+
 load_config()
 
 default_calc_menu = {"Three Pin": {'route': "/",
@@ -67,7 +77,8 @@ def three_pin_calc_render():
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Three Pin']['selected'] = True
     if request.method == 'POST':
-        logging.info(f"Remote IP {request.environ['REMOTE_ADDR']} POST request on three pin calculator")
+        logging.info("POST request on three pin calculator")
+        log_remote_ip()
         if not form.validate_on_submit():
             flash('Form validation failed')
             logging.warning("Form validation failed")
@@ -138,7 +149,8 @@ def pin_calc_render():
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Gage Size']['selected'] = True
     if request.method == 'POST':
-        logging.info(f"Remote IP {request.environ['REMOTE_ADDR']} POST request on pin size calculator")
+        logging.info("POST request on pin size calculator")
+        log_remote_ip()
         if not form.validate_on_submit():
             logging.warning("Form validation failed")
             flash('Form validation failed')
@@ -188,7 +200,8 @@ def reverse_calc_render():
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Reverse']['selected'] = True
     if request.method == 'POST':
-        logging.info(f"Remote IP {request.environ['REMOTE_ADDR']} POST request on reverse calculator")
+        logging.info("POST request on reverse calculator")
+        log_remote_ip()
         try:
             form.validate()
         except ValidationError as e:
