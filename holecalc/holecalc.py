@@ -283,52 +283,71 @@ def calculate_hole_size_limits(pin1: tuple, pin2: tuple, pin3: tuple, units: str
     return min_hole, max_hole
 
 
-def calculate_center_positions(pin1: float, pin2: float, pin3: float, hole_dia) -> tuple:
+def calculate_center_positions(pin1: float, pin2: float, pin3: float) -> tuple:
     """
     From three known tangent circle diameters (representing pins in a hole),
     calculate the x,y coordinates of each circle center relative to the center 0,0
     of the circumscribing circle with diameter of hole_dia.
 
-    This function will eventually be used to draw the relative sizes and positions of the three
-    pins within the hole being measured. Need to figure out the geometry first before I can
-    complete it, though!
+    The code used to calculate the circle positions is based on that used in Ludger Sandig's
+    apollon, see https://github.com/lsandig/apollon/blob/master/apollon.py. Thanks to Ludger.
     """
 
-    def sec(x):
-        return 1 / (cos(x))
+    class Circle(object):
+        """
+        A circle represented by center point coordinates and radius.
+        """
 
-    ab = pin1 / 2 + pin2 / 2
-    bc = pin2 / 2 + pin3 / 2
-    ca = pin3 / 2 + pin1 / 2
-    # find angles A, B, C
-    angle_a = degrees(acos((ab ** 2 + bc ** 2 - ca ** 2)
-                           / (2 * ab * bc)))
-    angle_b = degrees(acos((ca ** 2 + bc ** 2 - ab ** 2)
-                           / (2 * ca * bc)))
-    angle_c = degrees(acos((ca ** 2 + ab ** 2 - bc ** 2)
-                           / (2 * ca * ab)))
-    s = (ab + bc + ca) / 2
-    area = sqrt(s * (s - ab) * (s - bc) * (s - ca))
-    # find the trilinear coordinates of the isoperimetric center
-    A = sec(angle_a / 2) * cos(angle_b / 2) * cos(angle_c / 2) - 1
-    B = sec(angle_b / 2) * cos(angle_c / 2) * cos(angle_a / 2) - 1
-    C = sec(angle_c / 2) * cos(angle_a / 2) * cos(angle_b / 2) - 1
-    coords = (A, B, C)
-    r = (2 * area) / (ab + bc + ca)
-    k = (2 * area) / (ab * B + bc * B + ca * C)
+        def __init__(self, mx, my, r):
+            """
+            @param mx: x center coordinate
+            @type mx: int or float
+            @param my: y center coordinate
+            @type my: int or float
+            @param r: radius
+            @type r: int or float
+            """
+            self.r = r  # radius
+            self.x = mx  # center x position
+            self.y = my  # center y position
+            self.k = 1 / r  # circle curvature
+            self.m = (mx + my * 1j)  # complex number representing the center point
 
-    # possibly helpful references
-    # https://mathworld.wolfram.com/ExactTrilinearCoordinates.html
-    # https://mathworld.wolfram.com/TrilinearCoordinates.html
-    # https://mathworld.wolfram.com/IsoperimetricPoint.html
-    # https://mathworld.wolfram.com/TriangleCenterFunction.html
-    # https://faculty.evansville.edu/ck6/tcenters/trilin.html
-    # https://faculty.evansville.edu/ck6/tcenters/recent/isoper.html
-    # https://archive.lib.msu.edu/crcmath/math/math/i/i268.htm
-    # https://archive.lib.msu.edu/crcmath/math/math/t/t361.htm
+    # calculate pin radii
+    r1 = pin1 / 2
+    r2 = pin2 / 2
+    r3 = pin3 / 2
 
+    # create Circle instances based on the three pins
+    circle1 = Circle(0, 0, r1)
+    circle2 = Circle(r1 + r2, 0, r2)
+    m3x = (r1 * r1 + r1 * r3 + r1 * r2 - r2 * r3) / (r1 + r2)
+    m3y = sqrt((r1 + r3) * (r1 + r3) - m3x * m3x)
+    circle3 = Circle(m3x, m3y, r3)
+    cur1 = circle1.k
+    cur2 = circle2.k
+    cur3 = circle3.k
+    m1 = circle1.m
+    m2 = circle2.m
+    m3 = circle3.m
+    # calculate radius and position of enclosing circle and create Circle instance
+    cur4 = -2 * sqrt(cur1 * cur2 + cur2 * cur3 + cur1 * cur3) + cur1 + cur2 + cur3
+    m4 = (-2 * sqrt(cur1 * m1 * cur2 * m2 + cur2 * m2 * cur3 * m3 + cur1 * m1 * cur3 * m3)
+          + cur1 * m1 + cur2 * m2 + cur3 * m3) / cur4
+    circle4 = Circle(m4.real, m4.imag, abs(1 / cur4))
 
-    x1, x2, x3, y1, y2, y3 = None
+    # Transform circle coordinates so enclosing_circle center is at the x,y origin and
+    # all dimensions/coordinates are on a scale of 0-1 where the maximum value of 1 is
+    # scaled to the radius of the outer circle
+    outer_radius = circle4.r
+    scale_factor = 1 / outer_radius
+    x1 = ((circle1.x - circle4.x) * scale_factor).real
+    y1 = ((circle1.y - circle4.y) * scale_factor).real
+    x2 = ((circle2.x - circle4.x) * scale_factor).real
+    y2 = ((circle2.y - circle4.y) * scale_factor).real
+    x3 = ((circle3.x - circle4.x) * scale_factor).real
+    y3 = ((circle3.y - circle4.y) * scale_factor).real
+
     return (x1, y1), (x2, y2), (x3, y3)
 
 
