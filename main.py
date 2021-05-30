@@ -36,7 +36,8 @@ def log_remote_ip():
         # NGNIX uses this header when proxying requests
         logging.info("Remote IP and proxy: " + request.environ['HTTP_X_FORWARDED_FOR'])
     else:
-        # for local development, or if another proxy is used that doesn't provide the header HTTP_X_FORWARDED_FOR
+        # for local development, or if another proxy is used that doesn't provide
+        # the HTTP header X_FORWARDED_FOR
         logging.info("Remote IP: " + request.remote_addr)
 
 
@@ -48,6 +49,13 @@ default_calc_menu = {"Three Pin": {'route': "/",
                                  'selected': False},
                      "Gage Size": {'route': "/pinsize",
                                    'selected': False}}
+
+# radii and center coordinates of default pins to draw
+default_diagram_pins = (
+    {'x': 0.5, 'y': 0.667, 'r': 0.167},
+    {'x': 0, 'y': 0.667, 'r': 0.333},
+    {'x': 0.5, 'y': 0, 'r': 0.5}
+)
 
 
 @app.route('/heartbeat')
@@ -85,7 +93,8 @@ def three_pin_calc_render():
             rendered = render_template(
                 'threepin.html',
                 form=form,
-                calc_menu=calc_menu
+                calc_menu=calc_menu,
+                pins=default_diagram_pins
             )
             return html_minify(rendered)
         form_units = form.units.data
@@ -138,7 +147,8 @@ def three_pin_calc_render():
                 flash(str(e))
     rendered = render_template('threepin.html',
                                form=form,
-                               calc_menu=calc_menu)
+                               calc_menu=calc_menu,
+                               pins=default_diagram_pins)
     return html_minify(rendered)
 
 
