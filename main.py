@@ -9,6 +9,7 @@ from flask_wtf.csrf import CSRFProtect
 from wtforms import ValidationError
 import copy
 import os
+from htmlmin.minify import html_minify
 
 app = Flask(__name__)
 csrf = CSRFProtect(app)
@@ -29,8 +30,17 @@ def load_config(mode=os.environ.get('FLASK_ENV')):
         app.config.from_object(dev)
 
 
-load_config()
+def log_remote_ip():
+    """Log remote IP, used for POST requests on calculator forms."""
+    if "HTTP_X_FORWARDED_FOR" in request.environ.keys():
+        # NGNIX uses this header when proxying requests
+        logging.info("Remote IP and proxy: " + request.environ['HTTP_X_FORWARDED_FOR'])
+    else:
+        # for local development, or if another proxy is used that doesn't provide the header HTTP_X_FORWARDED_FOR
+        logging.info("Remote IP: " + request.remote_addr)
 
+
+load_config()
 
 default_calc_menu = {"Three Pin": {'route': "/",
                                    'selected': False},
@@ -49,13 +59,15 @@ def heartbeat():
 @app.route('/about/')
 def about():
     """Route for about page"""
-    return render_template('about.html')
+    rendered = render_template('about.html')
+    return html_minify(rendered)
 
 
 @app.route('/guide/')
 def guide():
     """Route for guide page"""
-    return render_template('guide.html')
+    rendered = render_template('guide.html')
+    return html_minify(rendered)
 
 
 @app.route('/', methods=('GET', 'POST'))
@@ -65,15 +77,17 @@ def three_pin_calc_render():
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Three Pin']['selected'] = True
     if request.method == 'POST':
-        logging.info("POST request from user on three pin calculator")
+        logging.info("POST request on three pin calculator")
+        log_remote_ip()
         if not form.validate_on_submit():
             flash('Form validation failed')
             logging.warning("Form validation failed")
-            return render_template(
+            rendered = render_template(
                 'threepin.html',
                 form=form,
                 calc_menu=calc_menu
             )
+            return html_minify(rendered)
         form_units = form.units.data
         precision = form.precision.data
         pin1 = form.pin1.data
@@ -94,7 +108,7 @@ def three_pin_calc_render():
                     raise ValueError(calc_result['error'])
                 formatted_result = str(calc_result['result'].quantize(Decimal(precision)))
                 logging.info(f"Calculated hole size in nominal mode: {formatted_result}")
-                flash('Diameter: ' + formatted_result)
+                flash(f'Bore diameter: {formatted_result} {form_units}')
             except (TypeError, ValueError) as e:
                 logging.info(f"Calculation error generated during hole size calculation: {str(e)}")
                 flash(str(e))
@@ -117,14 +131,15 @@ def three_pin_calc_render():
                 min_result = str(min(result_values))
                 logging.info(f"Calculated hole size in tolerance mode, min: {min_result}, "
                              f"max: {max_result}")
-                flash(f'Min diameter: {min_result} {form_units}')
-                flash(f'Max diameter: {max_result} {form_units}')
+                flash(f'Min bore diameter: {min_result} {form_units}')
+                flash(f'Max bore diameter: {max_result} {form_units}')
             except (TypeError, ValueError) as e:
                 logging.info(f"Calculation error generated during hole size calculation: {str(e)}")
                 flash(str(e))
-    return render_template('threepin.html',
-                           form=form,
-                           calc_menu=calc_menu)
+    rendered = render_template('threepin.html',
+                               form=form,
+                               calc_menu=calc_menu)
+    return html_minify(rendered)
 
 
 @app.route('/pinsize', methods=('GET', 'POST'))
@@ -134,14 +149,17 @@ def pin_calc_render():
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Gage Size']['selected'] = True
     if request.method == 'POST':
-        logging.info("POST request from user on pin size calculator")
+        logging.info("POST request on pin size calculator")
+        log_remote_ip()
         if not form.validate_on_submit():
             logging.warning("Form validation failed")
             flash('Form validation failed')
-            return render_template(
-                'reverse.html',
-                form=form
+            rendered = render_template(
+                'pinsize.html',
+                form=form,
+                calc_menu=calc_menu
             )
+            return html_minify(rendered)
         else:
             form_units = form.units.data
             pin_dia = form.pin_dia.data
@@ -167,11 +185,12 @@ def pin_calc_render():
                 min_result = str(min(result_values))
                 max_result = str(max(result_values))
                 logging.info(f"Calculated pin size, min: {min_result} max: {max_result}")
-                flash(f'Min gage diameter: {min_result} {form_units}')
                 flash(f'Max gage diameter: {max_result} {form_units}')
-    return render_template('pinsize.html',
+                flash(f'Min gage diameter: {min_result} {form_units}')
+    rendered = render_template('pinsize.html',
                            form=form,
                            calc_menu=calc_menu)
+    return html_minify(rendered)
 
 
 @app.route('/reverse', methods=('GET', 'POST'))
@@ -181,16 +200,18 @@ def reverse_calc_render():
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Reverse']['selected'] = True
     if request.method == 'POST':
-        logging.info("POST request from user on reverse calculator")
+        logging.info("POST request on reverse calculator")
+        log_remote_ip()
         try:
             form.validate()
         except ValidationError as e:
             logging.warning(f"Form validation failed: {e}")
             flash(str(e))
-            return render_template(
+            rendered = render_template(
                 'reverse.html',
                 form=form,
                 calc_menu=calc_menu)
+            return html_minify(rendered)
         form_units = form.units.data
         precision = form.precision.data
         pin1 = form.pin1.data
@@ -204,12 +225,34 @@ def reverse_calc_render():
         else:
             formatted_result = str(calc_result['result'].quantize(Decimal(precision)))
             logging.info(f"Calculated pin size in reverse mode: {formatted_result}")
-            flash(f'Diameter: {formatted_result} {form_units}')
-    return render_template('reverse.html',
+            flash(f'Gage diameter: {formatted_result} {form_units}')
+    rendered = render_template('reverse.html',
                            form=form,
                            calc_menu=calc_menu)
+    return html_minify(rendered)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    """Render 404 page not found template"""
+    rendered = render_template('404.html')
+    return rendered, 404
+
+
+@app.errorhandler(403)
+def page_not_found(e):
+    """Render 403 forbidden template"""
+    rendered = render_template('403.html')
+    return rendered, 403
+
+
+@app.errorhandler(500)
+def page_not_found(e):
+    """Render 500 internal server error template"""
+    logging.warning("A 500 internal server error was generated")
+    rendered = render_template('500.html')
+    return rendered, 500
 
 
 if __name__ == '__main__':
-
     app.run(debug=True)

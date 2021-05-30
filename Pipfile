@@ -12,6 +12,7 @@ flake8 = "*"
 flask-wtf = "*"
 wtforms = "*"
 pytest-flask = "*"
+django-htmlmin = "*"
 
 [requires]
 python_version = "3.8"

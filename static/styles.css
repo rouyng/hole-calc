@@ -17,8 +17,8 @@ Add Space Grotesk font
 */
 @font-face {
     font-family: "spaceg";
-    src: url('/static/fonts/SpaceGrotesk[wght].woff2') format('woff2 supports variations'),
-    url('/static/fonts/SpaceGrotesk[wght].woff2') format('woff2-variations');
+    src: url('/static/fonts/SpaceGrotesk.woff2') format('woff2 supports variations'),
+    url('/static/fonts/SpaceGrotesk.woff2') format('woff2-variations');
     font-weight: 100 1000;
     font-stretch: 25% 151%;
     font-display: swap;
@@ -144,7 +144,8 @@ tr {
 }
 
 .result-error {
-    color: var(--error-accent)
+    color: var(--error-accent);
+    font-weight: bold;
 }
 
 .home-menu {
@@ -201,6 +202,7 @@ tr {
 .calc-menu .pure-menu-item {
     background-color: var(--light-accent);
     border-radius: 3px 3px 0 0;
+    margin-right: 4px
 }
 
 .calc-menu .pure-menu-selected {
@@ -223,5 +225,9 @@ tr {
 .calc-menu .pure-menu-selected .pure-menu-link:hover {
     background-color: var(--dark-accent);
 
+}
+
+input[name="tol_radio"] {
+    margin-left: 6px;
 }
 
