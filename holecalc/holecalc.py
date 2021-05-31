@@ -60,7 +60,9 @@ def calculate_hole_size(pin1: str, pin2: str, pin3: str) -> dict:
     if result >= 0:
         logging.debug(f"Descartes theorem returned a positive value for {(pin1, pin2, pin3)}")
         return {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
-    return {'result': abs(result), 'error': None}
+    return {'result': abs(result),
+            'circles': calculate_center_positions(float(pin1), float(pin2), float(pin3)),
+            'error': None}
 
 
 def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str = "in"):
@@ -348,7 +350,11 @@ def calculate_center_positions(pin1: float, pin2: float, pin3: float) -> tuple:
     y2 = abs(((circle2.y.real - circle4.y.real) - outer_radius) * scale_factor)
     x3 = abs(((circle3.x.real - circle4.x.real) - outer_radius) * scale_factor)
     y3 = abs(((circle3.y.real - circle4.y.real) - outer_radius) * scale_factor)
-    return (x1, y1), (x2, y2), (x3, y3)
+    return (
+        {'x': x1, 'y': y1, 'r': r1 / outer_radius},
+        {'x': x2, 'y': y2, 'r': r2 / outer_radius},
+        {'x': x3, 'y': y3, 'r': r3 / outer_radius}
+    )
 
 
 def calculate_remaining_pin(bore_dia: str, pin1: str, pin2: str, ) -> dict:

@@ -51,7 +51,7 @@ default_calc_menu = {"Three Pin": {'route': "/",
                                    'selected': False}}
 
 # radii and center coordinates of default pins to draw
-default_diagram_pins = (
+default_diagram_circles = (
     {'x': .75, 'y': .83, 'r': 0.167},
     {'x': 0.5, 'y': 0.83, 'r': 0.333},
     {'x': 0.75, 'y': 0.5, 'r': 0.5}
@@ -84,6 +84,7 @@ def three_pin_calc_render():
     form = ThreePinForm()
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Three Pin']['selected'] = True
+    draw_circles = default_diagram_circles
     if request.method == 'POST':
         logging.info("POST request on three pin calculator")
         log_remote_ip()
@@ -94,7 +95,7 @@ def three_pin_calc_render():
                 'threepin.html',
                 form=form,
                 calc_menu=calc_menu,
-                pins=default_diagram_pins
+                circles=draw_circles
             )
             return html_minify(rendered)
         form_units = form.units.data
@@ -118,6 +119,7 @@ def three_pin_calc_render():
                 formatted_result = str(calc_result['result'].quantize(Decimal(precision)))
                 logging.info(f"Calculated hole size in nominal mode: {formatted_result}")
                 flash(f'Bore diameter: {formatted_result} {form_units}')
+                draw_circles = calc_result['circles']
             except (TypeError, ValueError) as e:
                 logging.info(f"Calculation error generated during hole size calculation: {str(e)}")
                 flash(str(e))
@@ -142,13 +144,14 @@ def three_pin_calc_render():
                              f"max: {max_result}")
                 flash(f'Min bore diameter: {min_result} {form_units}')
                 flash(f'Max bore diameter: {max_result} {form_units}')
+                draw_circles = calc_result[0]['circles']
             except (TypeError, ValueError) as e:
                 logging.info(f"Calculation error generated during hole size calculation: {str(e)}")
                 flash(str(e))
     rendered = render_template('threepin.html',
                                form=form,
                                calc_menu=calc_menu,
-                               pins=default_diagram_pins)
+                               circles=draw_circles)
     return html_minify(rendered)
 
 
