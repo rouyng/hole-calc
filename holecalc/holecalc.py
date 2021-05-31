@@ -4,6 +4,7 @@
 from decimal import Decimal, getcontext, InvalidOperation
 import logging
 from math import acos, cos, radians, degrees, sqrt
+from cmath import sqrt as csqrt
 
 # set precision for decimal math
 getcontext().prec = 12
@@ -322,7 +323,7 @@ def calculate_center_positions(pin1: float, pin2: float, pin3: float) -> tuple:
     circle1 = Circle(0, 0, r1)
     circle2 = Circle(r1 + r2, 0, r2)
     m3x = (r1 * r1 + r1 * r3 + r1 * r2 - r2 * r3) / (r1 + r2)
-    m3y = sqrt((r1 + r3) * (r1 + r3) - m3x * m3x)
+    m3y = csqrt((r1 + r3) * (r1 + r3) - m3x * m3x)
     circle3 = Circle(m3x, m3y, r3)
     cur1 = circle1.k
     cur2 = circle2.k
@@ -331,8 +332,8 @@ def calculate_center_positions(pin1: float, pin2: float, pin3: float) -> tuple:
     m2 = circle2.m
     m3 = circle3.m
     # calculate radius and position of enclosing circle and create Circle instance
-    cur4 = -2 * sqrt(cur1 * cur2 + cur2 * cur3 + cur1 * cur3) + cur1 + cur2 + cur3
-    m4 = (-2 * sqrt(cur1 * m1 * cur2 * m2 + cur2 * m2 * cur3 * m3 + cur1 * m1 * cur3 * m3)
+    cur4 = -2 * csqrt(cur1 * cur2 + cur2 * cur3 + cur1 * cur3) + cur1 + cur2 + cur3
+    m4 = (-2 * csqrt(cur1 * m1 * cur2 * m2 + cur2 * m2 * cur3 * m3 + cur1 * m1 * cur3 * m3)
           + cur1 * m1 + cur2 * m2 + cur3 * m3) / cur4
     circle4 = Circle(m4.real, m4.imag, abs(1 / cur4))
 
@@ -340,14 +341,13 @@ def calculate_center_positions(pin1: float, pin2: float, pin3: float) -> tuple:
     # all dimensions/coordinates are on a scale of 0-1 where the maximum value of 1 is
     # scaled to the radius of the outer circle
     outer_radius = circle4.r
-    scale_factor = 1 / outer_radius
-    x1 = ((circle1.x - circle4.x) * scale_factor).real
-    y1 = ((circle1.y - circle4.y) * scale_factor).real
-    x2 = ((circle2.x - circle4.x) * scale_factor).real
-    y2 = ((circle2.y - circle4.y) * scale_factor).real
-    x3 = ((circle3.x - circle4.x) * scale_factor).real
-    y3 = ((circle3.y - circle4.y) * scale_factor).real
-
+    scale_factor = (1 / outer_radius) * 2
+    x1 = abs(((circle1.x - circle4.x) * scale_factor).real + .5)
+    y1 = abs(((circle1.y - circle4.y) * scale_factor).real + .5)
+    x2 = abs(((circle2.x - circle4.x) * scale_factor).real + .5)
+    y2 = abs(((circle2.y - circle4.y) * scale_factor).real + .5)
+    x3 = abs(((circle3.x - circle4.x) * scale_factor).real + .5)
+    y3 = abs(((circle3.y - circle4.y) * scale_factor).real + .5)
     return (x1, y1), (x2, y2), (x3, y3)
 
 

@@ -52,9 +52,9 @@ default_calc_menu = {"Three Pin": {'route': "/",
 
 # radii and center coordinates of default pins to draw
 default_diagram_pins = (
-    {'x': 0.5, 'y': 0.667, 'r': 0.167},
-    {'x': 0, 'y': 0.667, 'r': 0.333},
-    {'x': 0.5, 'y': 0, 'r': 0.5}
+    {'x': .75, 'y': .83, 'r': 0.167},
+    {'x': 0.5, 'y': 0.83, 'r': 0.333},
+    {'x': 0.75, 'y': 0.5, 'r': 0.5}
 )
 
 
