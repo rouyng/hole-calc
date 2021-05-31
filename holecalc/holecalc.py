@@ -3,7 +3,8 @@
 
 from decimal import Decimal, getcontext, InvalidOperation
 import logging
-
+from math import acos, cos, radians, degrees, sqrt
+from cmath import sqrt as csqrt
 
 # set precision for decimal math
 getcontext().prec = 12
@@ -44,7 +45,7 @@ def calculate_hole_size(pin1: str, pin2: str, pin3: str) -> dict:
     descriptive math error text.
     """
     try:
-        curvatures = [1/(Decimal(d) / 2) for d in (pin1, pin2, pin3)]  # determine curvatures
+        curvatures = [1 / (Decimal(d) / 2) for d in (pin1, pin2, pin3)]  # determine curvatures
         result = descartes(curvatures[0], curvatures[1], curvatures[2])
     except ZeroDivisionError as e:
         # no pin diameter should be zero, if that occurs ZeroDivisionError is raised
@@ -59,7 +60,9 @@ def calculate_hole_size(pin1: str, pin2: str, pin3: str) -> dict:
     if result >= 0:
         logging.debug(f"Descartes theorem returned a positive value for {(pin1, pin2, pin3)}")
         return {'result': None, 'error': 'Cannot calculate hole dimension, check pin values'}
-    return {'result': abs(result), 'error': None}
+    return {'result': abs(result),
+            'circles': calculate_center_positions(float(pin1), float(pin2), float(pin3)),
+            'error': None}
 
 
 def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str = "in"):
@@ -69,7 +72,7 @@ def pin_tolerance_limits(nominal: str, tol_class: str, is_plus: bool, units: str
     Tolerance class information from ASME B89.1.5-1998
     """
     logging.debug(f"Calculating pin tolerance bounds: {nominal} dia, "
-                 f"{tol_class} class, positive {is_plus}, units {units}")
+                  f"{tol_class} class, positive {is_plus}, units {units}")
     nominal_dia = Decimal(nominal)
     if units not in ("in", "mm"):
         raise ValueError(f"Invalid units specified: {units}")
@@ -283,18 +286,75 @@ def calculate_hole_size_limits(pin1: tuple, pin2: tuple, pin3: tuple, units: str
     return min_hole, max_hole
 
 
-def calculate_center_positions(pin1: float, pin2: float, pin3: float, hole_dia):
+def calculate_center_positions(pin1: float, pin2: float, pin3: float) -> tuple:
     """
     From three known tangent circle diameters (representing pins in a hole),
     calculate the x,y coordinates of each circle center relative to the center 0,0
     of the circumscribing circle with diameter of hole_dia.
 
-    This function will eventually be used to draw the relative sizes and positions of the three
-    pins within the hole being measured. Need to figure out the geometry first before I can
-    complete it, though!
+    The code used to calculate the circle positions is based on that used in Ludger Sandig's
+    apollon, see https://github.com/lsandig/apollon/blob/master/apollon.py. Thanks to Ludger.
     """
-    # placeholder for planned functionality
-    pass
+
+    class Circle(object):
+        """
+        A circle represented by center point coordinates and radius.
+        """
+
+        def __init__(self, mx, my, r):
+            """
+            @param mx: x center coordinate
+            @type mx: int or float
+            @param my: y center coordinate
+            @type my: int or float
+            @param r: radius
+            @type r: int or float
+            """
+            self.r = r  # radius
+            self.x = mx  # center x position
+            self.y = my  # center y position
+            self.k = 1 / r  # circle curvature
+            self.m = (mx + my * 1j)  # complex number representing the center point
+
+    # calculate pin radii
+    r1 = pin1 / 2
+    r2 = pin2 / 2
+    r3 = pin3 / 2
+
+    # create Circle instances based on the three pins
+    circle1 = Circle(0, 0, r1)
+    circle2 = Circle(r1 + r2, 0, r2)
+    m3x = (r1 * r1 + r1 * r3 + r1 * r2 - r2 * r3) / (r1 + r2)
+    m3y = csqrt((r1 + r3) * (r1 + r3) - m3x * m3x)
+    circle3 = Circle(m3x, m3y, r3)
+    cur1 = circle1.k
+    cur2 = circle2.k
+    cur3 = circle3.k
+    m1 = circle1.m
+    m2 = circle2.m
+    m3 = circle3.m
+    # calculate radius and position of enclosing circle and create Circle instance
+    cur4 = -2 * csqrt(cur1 * cur2 + cur2 * cur3 + cur1 * cur3) + cur1 + cur2 + cur3
+    m4 = (-2 * csqrt(cur1 * m1 * cur2 * m2 + cur2 * m2 * cur3 * m3 + cur1 * m1 * cur3 * m3)
+          + cur1 * m1 + cur2 * m2 + cur3 * m3) / cur4
+    circle4 = Circle(m4.real, m4.imag, abs(1 / cur4))
+
+    # Transform circle coordinates so enclosing_circle center is at the x,y origin and
+    # all dimensions/coordinates are on a scale of 0-1 where the maximum value of 1 is
+    # scaled to the radius of the outer circle
+    outer_radius = circle4.r
+    scale_factor = 1 / (outer_radius*2)
+    x1 = abs(((circle1.x.real - circle4.x.real) - outer_radius) * scale_factor)
+    y1 = abs(((circle1.y.real - circle4.y.real) - outer_radius) * scale_factor)
+    x2 = abs(((circle2.x.real - circle4.x.real) - outer_radius) * scale_factor)
+    y2 = abs(((circle2.y.real - circle4.y.real) - outer_radius) * scale_factor)
+    x3 = abs(((circle3.x.real - circle4.x.real) - outer_radius) * scale_factor)
+    y3 = abs(((circle3.y.real - circle4.y.real) - outer_radius) * scale_factor)
+    return (
+        {'x': x1, 'y': y1, 'r': r1 / outer_radius},
+        {'x': x2, 'y': y2, 'r': r2 / outer_radius},
+        {'x': x3, 'y': y3, 'r': r3 / outer_radius}
+    )
 
 
 def calculate_remaining_pin(bore_dia: str, pin1: str, pin2: str, ) -> dict:
@@ -315,7 +375,8 @@ def calculate_remaining_pin(bore_dia: str, pin1: str, pin2: str, ) -> dict:
 
     try:
         neg_bore_dia = -1 * Decimal(bore_dia)
-        curvatures = [1/(Decimal(d) / 2) for d in (pin1, pin2, neg_bore_dia)]  # determine curvatures
+        curvatures = [1 / (Decimal(d) / 2) for d in
+                      (pin1, pin2, neg_bore_dia)]  # determine curvatures
         result = descartes(curvatures[0], curvatures[1], curvatures[2])
     except ZeroDivisionError as e:
         # no pin diameter should be zero, if that occurs ZeroDivisionError is raised
@@ -329,4 +390,6 @@ def calculate_remaining_pin(bore_dia: str, pin1: str, pin2: str, ) -> dict:
     if result < 0:
         logging.debug(f"Descartes theorem returned a positive value for {(pin1, pin2, bore_dia)}")
         return {'result': None, 'error': 'Cannot calculate pin dimension, check pin/bore diameters'}
-    return {'result': result, 'error': None}
+    return {'result': result,
+            'circles': calculate_center_positions(float(pin1), float(pin2), float(result)),
+            'error': None}

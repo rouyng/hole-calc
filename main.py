@@ -34,9 +34,10 @@ def log_remote_ip():
     """Log remote IP, used for POST requests on calculator forms."""
     if "HTTP_X_FORWARDED_FOR" in request.environ.keys():
         # NGNIX uses this header when proxying requests
-        logging.info("Remote IP: " + request.environ['HTTP_X_FORWARDED_FOR'])
+        logging.info("Remote IP and proxy: " + request.environ['HTTP_X_FORWARDED_FOR'])
     else:
-        # for local development, or if another proxy is used that doesn't provide the header HTTP_X_FORWARDED_FOR
+        # for local development, or if another proxy is used that doesn't provide
+        # the HTTP header X_FORWARDED_FOR
         logging.info("Remote IP: " + request.remote_addr)
 
 
@@ -48,6 +49,13 @@ default_calc_menu = {"Three Pin": {'route': "/",
                                  'selected': False},
                      "Gage Size": {'route': "/pinsize",
                                    'selected': False}}
+
+# radii and center coordinates of default pins to draw
+default_diagram_circles = (
+    {'x': 0.732, 'y': 0.634, 'r': 0.464},
+    {'x': 0.268, 'y': 0.634, 'r': 0.464},
+    {'x': 0.5, 'y': 0.232, 'r': 0.464}
+)
 
 
 @app.route('/heartbeat')
@@ -76,6 +84,7 @@ def three_pin_calc_render():
     form = ThreePinForm()
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Three Pin']['selected'] = True
+    draw_circles = default_diagram_circles
     if request.method == 'POST':
         logging.info("POST request on three pin calculator")
         log_remote_ip()
@@ -85,7 +94,8 @@ def three_pin_calc_render():
             rendered = render_template(
                 'threepin.html',
                 form=form,
-                calc_menu=calc_menu
+                calc_menu=calc_menu,
+                circles=draw_circles
             )
             return html_minify(rendered)
         form_units = form.units.data
@@ -109,6 +119,7 @@ def three_pin_calc_render():
                 formatted_result = str(calc_result['result'].quantize(Decimal(precision)))
                 logging.info(f"Calculated hole size in nominal mode: {formatted_result}")
                 flash(f'Bore diameter: {formatted_result} {form_units}')
+                draw_circles = calc_result['circles']
             except (TypeError, ValueError) as e:
                 logging.info(f"Calculation error generated during hole size calculation: {str(e)}")
                 flash(str(e))
@@ -133,12 +144,14 @@ def three_pin_calc_render():
                              f"max: {max_result}")
                 flash(f'Min bore diameter: {min_result} {form_units}')
                 flash(f'Max bore diameter: {max_result} {form_units}')
+                draw_circles = calc_result[0]['circles']
             except (TypeError, ValueError) as e:
                 logging.info(f"Calculation error generated during hole size calculation: {str(e)}")
                 flash(str(e))
     rendered = render_template('threepin.html',
                                form=form,
-                               calc_menu=calc_menu)
+                               calc_menu=calc_menu,
+                               circles=draw_circles)
     return html_minify(rendered)
 
 
@@ -199,6 +212,7 @@ def reverse_calc_render():
     form = ReverseForm()
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Reverse']['selected'] = True
+    draw_circles = default_diagram_circles
     if request.method == 'POST':
         logging.info("POST request on reverse calculator")
         log_remote_ip()
@@ -210,7 +224,8 @@ def reverse_calc_render():
             rendered = render_template(
                 'reverse.html',
                 form=form,
-                calc_menu=calc_menu)
+                calc_menu=calc_menu,
+                circles=draw_circles)
             return html_minify(rendered)
         form_units = form.units.data
         precision = form.precision.data
@@ -226,9 +241,11 @@ def reverse_calc_render():
             formatted_result = str(calc_result['result'].quantize(Decimal(precision)))
             logging.info(f"Calculated pin size in reverse mode: {formatted_result}")
             flash(f'Gage diameter: {formatted_result} {form_units}')
+            draw_circles = calc_result['circles']
     rendered = render_template('reverse.html',
                            form=form,
-                           calc_menu=calc_menu)
+                           calc_menu=calc_menu,
+                           circles=draw_circles)
     return html_minify(rendered)
 
 
