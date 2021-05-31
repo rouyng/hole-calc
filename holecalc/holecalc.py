@@ -390,4 +390,6 @@ def calculate_remaining_pin(bore_dia: str, pin1: str, pin2: str, ) -> dict:
     if result < 0:
         logging.debug(f"Descartes theorem returned a positive value for {(pin1, pin2, bore_dia)}")
         return {'result': None, 'error': 'Cannot calculate pin dimension, check pin/bore diameters'}
-    return {'result': result, 'error': None}
+    return {'result': result,
+            'circles': calculate_center_positions(float(pin1), float(pin2), float(result)),
+            'error': None}

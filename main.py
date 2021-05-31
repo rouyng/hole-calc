@@ -212,6 +212,7 @@ def reverse_calc_render():
     form = ReverseForm()
     calc_menu = copy.deepcopy(default_calc_menu)
     calc_menu['Reverse']['selected'] = True
+    draw_circles = default_diagram_circles
     if request.method == 'POST':
         logging.info("POST request on reverse calculator")
         log_remote_ip()
@@ -223,7 +224,8 @@ def reverse_calc_render():
             rendered = render_template(
                 'reverse.html',
                 form=form,
-                calc_menu=calc_menu)
+                calc_menu=calc_menu,
+                circles=draw_circles)
             return html_minify(rendered)
         form_units = form.units.data
         precision = form.precision.data
@@ -239,9 +241,11 @@ def reverse_calc_render():
             formatted_result = str(calc_result['result'].quantize(Decimal(precision)))
             logging.info(f"Calculated pin size in reverse mode: {formatted_result}")
             flash(f'Gage diameter: {formatted_result} {form_units}')
+            draw_circles = calc_result['circles']
     rendered = render_template('reverse.html',
                            form=form,
-                           calc_menu=calc_menu)
+                           calc_menu=calc_menu,
+                           circles=draw_circles)
     return html_minify(rendered)
 
 
