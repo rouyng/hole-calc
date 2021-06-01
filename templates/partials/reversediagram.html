@@ -7,7 +7,9 @@
         <circle r="{{ circles[1]['r'] * 97 }}" cx="{{ circles[1]['x'] * 200 }}" cy="{{ circles[1]['y'] * 200 + 25 }}" stroke="#191d32" stroke-width="2" fill="#B6C2D9"></circle>
         <circle r="{{ circles[2]['r'] * 97 }}" cx="{{ circles[2]['x'] * 200 }}" cy="{{ circles[2]['y'] * 200 + 25 }}" stroke="#ffac00" stroke-width="2" stroke-dasharray="8 3" fill="none"></circle>
         {% if messages %}
-            <line x1="{{ (circles[2]['x'] * 200) - circles[2]['r'] * 97 }}" y1="{{ circles[2]['y'] * 200 + 25 }}" x2="35" y2="0" stroke="#ffac00" stroke-width="2"></line>
+            <line x1="{{ (circles[2]['x'] * 200) - circles[2]['r'] * 97 }}" y1="{{ circles[2]['y'] * 200 + 25 }}"
+                  x2="10" y2="{{ circles[2]['y'] * 200 + 25 }}" stroke="#ffac00" stroke-width="2"></line>
+            <line x1="10" y1="{{ circles[2]['y'] * 200 + 25 }}" x2="10" y2="0" stroke="#ffac00" stroke-width="2"></line>
         {% endif %}
     </svg>
 </div>
