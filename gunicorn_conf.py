@@ -1,3 +1,3 @@
 # Configuration file for Gunicorn. Included because the base docker image was timing out workers
 workers = 4  # Define the number of processes to be opened for processing requests at the same time
-timeout = 120  # Set the timeout to 120 seconds
+timeout = 1000  # Set the timeout to 120 seconds
