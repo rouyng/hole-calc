@@ -3,9 +3,19 @@
 // run toggleTol when page loads, so if "toleranced" is selected the fields will show after reloading the page
 document.addEventListener("DOMContentLoaded", function () {
     toggleTol();
+    const form_analytics = document.querySelector("form[data-analytics]");
+    form_analytics.addEventListener('submit', registerAnalyticsEvent);
 });
 
+// add plausible() to record custom event goals in plausible.io analytics
+// see https://plausible.io/docs/custom-event-goals
+window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }
 
+
+
+function registerAnalyticsEvent(event) {
+    plausible(event.target.getAttribute('data-analytics'));
+}
 
 // function to toggle showing pin tolerance options.
 function toggleTol() {
