@@ -34,11 +34,11 @@ def log_remote_ip():
     """Log remote IP, used for POST requests on calculator forms."""
     if "HTTP_X_FORWARDED_FOR" in request.environ.keys():
         # NGNIX uses this header when proxying requests
-        logging.info("Remote IP and proxy: " + request.environ['HTTP_X_FORWARDED_FOR'])
+        logging.debug("Remote IP and proxy: " + request.environ['HTTP_X_FORWARDED_FOR'])
     else:
         # for local development, or if another proxy is used that doesn't provide
         # the HTTP header X_FORWARDED_FOR
-        logging.info("Remote IP: " + request.remote_addr)
+        logging.debug("Remote IP: " + request.remote_addr)
 
 
 load_config()
