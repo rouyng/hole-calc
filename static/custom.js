@@ -7,12 +7,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // function to toggle showing pin tolerance options.
 function toggleTol() {
-    let tolDivs = document.getElementsByClassName("tol-params")
-    for (let f of tolDivs) {
-        if (document.getElementById("tol_radio-1").checked) {
-            f.style.display = "inline-block";
-        } else {
-            f.style.display = "none";
+    if (document.querySelector(".calc#threepin")) {
+        let tolDivs = document.getElementsByClassName("tol-params")
+        for (let f of tolDivs) {
+            if (document.getElementById("tol_radio-1").checked) {
+                f.style.display = "inline-block";
+            } else {
+                f.style.display = "none";
+            }
         }
     }
 }
