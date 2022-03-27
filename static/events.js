@@ -4,18 +4,18 @@
 window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }
 
 // Send form submit events to plausible
-let buttons = document.querySelectorAll("input[dataanalytics]");
-for (var i = 0; i < buttons.length; i++) {
-    buttons[i].addEventListener('click', handleFormEvent);
-    buttons[i].addEventListener('auxclick', handleFormEvent);
+let forms = document.querySelectorAll("form[dataanalytics]");
+for (let i = 0; i < forms.length; i++) {
+    forms[i].addEventListener('submit', handleFormEvent);
 }
 
 function handleFormEvent(event) {
   event.preventDefault();
+  console.log("Handling form event")
   let attributes = event.target.getAttribute('dataanalytics').split(/,(.+)/);
   let events = [JSON.parse(attributes[0]), JSON.parse(attributes[1] || '{}')];
   plausible(...events);
   setTimeout(function () {
-      event.target.form.submit();
+      event.target.submit();
   }, 150);
 }
