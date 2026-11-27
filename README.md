@@ -4,7 +4,7 @@
 Hole calc is a simple web application that allows you to calculate the diameter of a bore from the size of three cylindrical pin gages that fit into it, using [Descartes' Theorem](https://en.wikipedia.org/wiki/Descartes%27_theorem). This functionality is useful for machinists and anyone else who needs a semi-precision method of measuring bore diameters without dedicated tools. See the [guide](https://holecalc.com/guide) for more info on how to use hole calc.
 
 ## Application structure
-The hole calc application is built with the [Flask](https://flask.palletsprojects.com/en/1.1.x/) web application microframework. [Flask-WTForms](https://flask-wtf.readthedocs.io/en/stable/) was used to build the calculator input forms. The source code for the flask app is contained in `main.py`, while Flask templates reside in the `templates` subdirectory.
+The hole calc application is built with the [Flask](https://flask.palletsprojects.com/en/stable/) web application microframework. [Flask-WTForms](https://flask-wtf.readthedocs.io/en/stable/) was used to build the calculator input forms. The source code for the flask app is contained in `main.py`, while Flask templates reside in the `templates` subdirectory.
 
 The holecalc module contains the backend code that runs the geometry calculations for the application's main functionality. This module also contains a couple placeholder functions that need to be completed for future planned features (see TODO section below).
 
@@ -12,15 +12,28 @@ The holecalc module contains the backend code that runs the geometry calculation
 Hole calc is styled using [Pure.css](https://purecss.io/). The display font used for the menu and headings is [Space Grotesk](https://fonts.floriankarsten.com/space-grotesk) by Florian Karsten. The color scheme may be viewed [here](https://coolors.co/191d32-4d7ea8-b6c2d9-ffc857-ba2c73).
 
 ## Build, test and deployment
-Hole calc is developed and tested using Python 3.8. A pipfile is included for dependency management with Pipenv.
+Hole calc is developed and tested using Python 3.15. Dependencies are managed with [uv](https://docs.astral.sh/uv/): runtime dependencies and the `dev` dependency group (pytest, flake8) are declared in `pyproject.toml` and locked in `uv.lock`.
 
-The preferred way to build and deploy this application is via Docker, using the included Dockerfile. The base image used is `tiangolo/meinheld-gunicorn-flask:python3.8` ([docs](https://github.com/tiangolo/meinheld-gunicorn-flask-docker)).
+```sh
+uv sync            # create .venv with Python 3.15 and install all dependencies
+uv run pytest      # run the test suite
+uv run flake8 .    # lint
+```
+
+To add or upgrade a dependency, use `uv add <package>` (or `uv add --dev <package>`) and commit the updated `uv.lock`.
+
+The preferred way to build and deploy this application is via Docker, using the included Dockerfile. The image is based on `python:3.15-slim-trixie`, installs the locked runtime dependencies with uv, and serves the app with [gunicorn](https://gunicorn.org/) as a non-root user. Settings are in `gunicorn_conf.py`; it listens on `PORT` (default 8080) and runs `WEB_CONCURRENCY` workers (default 4).
+
+```sh
+docker build -t holecalc .
+docker run -p 8080:8080 -e APP_ENV=production -e SECRET_KEY=<secret> holecalc
+```
 
 Automated tests for the pytest framework are found in the `tests` subdirectory. Tests and linting with flake8 are run via GitHub action on every push to the master branch of this repository.
 
 ### Environment variables
 The following environment variables should be set during deployment:
-- FLASK_ENV: Use 'development', 'testing', or 'production'. Defaults to 'development' if not set.
+- APP_ENV: Use 'development', 'testing', or 'production'. Defaults to 'development' if not set.
 - SECRET_KEY: A secret key that will be used for securely signing the session cookie. Used for CSRF form validation. Not very important to guard against CSRF attacks currently, but this future proofs the app for potential added features.
 
 ## TODO:

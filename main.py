@@ -15,7 +15,8 @@ app = Flask(__name__)
 csrf = CSRFProtect(app)
 
 
-def load_config(mode=os.environ.get('FLASK_ENV')):
+def load_config(mode=os.environ.get('APP_ENV')):
+    """Load config for 'production', 'testing' or 'development' (default), per APP_ENV."""
     if mode == 'production':
         logging.info("Loading production environment config")
         from config import prod
