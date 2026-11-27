@@ -12,7 +12,15 @@ The holecalc module contains the backend code that runs the geometry calculation
 Hole calc is styled using [Pure.css](https://purecss.io/). The display font used for the menu and headings is [Space Grotesk](https://fonts.floriankarsten.com/space-grotesk) by Florian Karsten. The color scheme may be viewed [here](https://coolors.co/191d32-4d7ea8-b6c2d9-ffc857-ba2c73).
 
 ## Build, test and deployment
-Hole calc is developed and tested using Python 3.8. A pipfile is included for dependency management with Pipenv.
+Hole calc is developed and tested using Python 3.8. Dependencies are managed with [uv](https://docs.astral.sh/uv/): runtime dependencies and the `dev` dependency group (pytest, flake8) are declared in `pyproject.toml` and locked in `uv.lock`.
+
+```sh
+uv sync            # create .venv with Python 3.8 and install all dependencies
+uv run pytest      # run the test suite
+uv run flake8 .    # lint
+```
+
+To add or upgrade a dependency, use `uv add <package>` (or `uv add --dev <package>`) and commit the updated `uv.lock`.
 
 The preferred way to build and deploy this application is via Docker, using the included Dockerfile. The base image used is `tiangolo/meinheld-gunicorn-flask:python3.8` ([docs](https://github.com/tiangolo/meinheld-gunicorn-flask-docker)).
 
