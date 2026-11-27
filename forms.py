@@ -2,7 +2,7 @@
  Forms are composed here using WTForms and Flask-WTF"""
 
 from flask_wtf import FlaskForm
-from wtforms import DecimalField, RadioField, SelectField, SubmitField
+from wtforms import DecimalField, RadioField, SelectChoice, SelectField, SubmitField
 from wtforms.validators import DataRequired, NumberRange
 
 
@@ -25,11 +25,11 @@ class PinClassSelect(SelectField):
         super().__init__(
             label=f'Pin {pin_number} Class',
             choices=[
-                ('ZZ', 'ZZ'),
-                ('Z', 'Z'),
-                ('Y', 'Y'),
-                ('X', 'X'),
-                ('XX', 'XX'),
+                SelectChoice('ZZ'),
+                SelectChoice('Z'),
+                SelectChoice('Y'),
+                SelectChoice('X'),
+                SelectChoice('XX'),
             ],
             default='ZZ',
             **kwargs
@@ -43,8 +43,8 @@ class PinSignSelect(SelectField):
         super().__init__(
             label=f'Pin {pin_number} Sign',
             choices=[
-                ('+', '+'),
-                ('-', '-')
+                SelectChoice('+'),
+                SelectChoice('-')
             ],
             default='-',
             **kwargs
@@ -56,8 +56,8 @@ class ThreePinForm(FlaskForm):
     tol_radio = RadioField(
         label='Tolerance',
         choices=[
-            ('nom', 'Nominal'),
-            ('tol', 'Tolerance')
+            SelectChoice('nom', 'Nominal'),
+            SelectChoice('tol', 'Tolerance')
         ],
         default='nom'
     )
@@ -73,17 +73,17 @@ class ThreePinForm(FlaskForm):
     units = SelectField(
         label='Units',
         choices=[
-            ('in', 'IN'),
-            ('mm', 'MM')
+            SelectChoice('in', 'IN'),
+            SelectChoice('mm', 'MM')
         ]
     )
     precision = SelectField(
         label='Precision',
         choices=[
-            ('0.1', '0.1'),
-            ('0.01', '0.01'),
-            ('0.001', '0.001'),
-            ('0.0001', '0.0001'),
+            SelectChoice('0.1'),
+            SelectChoice('0.01'),
+            SelectChoice('0.001'),
+            SelectChoice('0.0001'),
         ],
         default='0.001'
     )
@@ -98,17 +98,17 @@ class ReverseForm(FlaskForm):
     units = SelectField(
         label='Units',
         choices=[
-            ('in', 'IN'),
-            ('mm', 'MM')
+            SelectChoice('in', 'IN'),
+            SelectChoice('mm', 'MM')
         ]
     )
     precision = SelectField(
         label='Precision',
         choices=[
-            ('0.1', '0.1'),
-            ('0.01', '0.01'),
-            ('0.001', '0.001'),
-            ('0.0001', '0.0001'),
+            SelectChoice('0.1'),
+            SelectChoice('0.01'),
+            SelectChoice('0.001'),
+            SelectChoice('0.0001'),
         ],
         default='0.001'
     )
@@ -123,8 +123,8 @@ class PinSizeForm(FlaskForm):
     units = SelectField(
         label='Units',
         choices=[
-            ('in', 'IN'),
-            ('mm', 'MM')
+            SelectChoice('in', 'IN'),
+            SelectChoice('mm', 'MM')
         ]
     )
     calculate = SubmitField('Calculate')

@@ -1,13 +1,26 @@
-FROM tiangolo/meinheld-gunicorn-flask:python3.8
+FROM python:3.15-slim-trixie
 COPY --from=ghcr.io/astral-sh/uv:0.13.10 /uv /usr/local/bin/uv
-WORKDIR /app/app
-ENV PORT 8080
-ENV GUNICORN_CONF /app/app/gunicorn_conf.py
-COPY pyproject.toml uv.lock ./
-RUN uv export --frozen --no-dev --no-hashes --no-emit-project -o requirements.txt \
- && uv pip install --system --no-cache -r requirements.txt
+
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_PYTHON_DOWNLOADS=never \
+    PATH="/app/.venv/bin:$PATH" \
+    PORT=8080
+
+WORKDIR /app
+
+# Install locked runtime dependencies first so this layer is cached across code changes
+COPY pyproject.toml uv.lock .python-version ./
+RUN uv sync --frozen --no-dev
+
 COPY holecalc holecalc
 COPY templates templates
 COPY static static
 COPY config config
 COPY main.py forms.py gunicorn_conf.py ./
+
+RUN useradd --system --no-create-home app
+USER app
+
+EXPOSE 8080
+CMD ["gunicorn", "-c", "gunicorn_conf.py", "main:app"]
