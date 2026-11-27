@@ -1,0 +1,48 @@
+[project]
+name = "hole-calc"
+version = "0.1.0"
+description = "Calculate bore diameter from three-pin gage measurements"
+readme = "README.md"
+requires-python = ">=3.8,<3.9"
+dependencies = [
+    "flask==1.1.2",
+    "flask-wtf==0.14.3",
+    "wtforms==2.3.3",
+    "django-htmlmin==0.11.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==6.2.2",
+    "pytest-flask==1.1.0",
+    "flake8==3.8.4",
+]
+
+[tool.uv]
+package = false
+# Transitive versions carried over from the former Pipfile.lock so this migration
+# changes tooling only. Newer Jinja2/MarkupSafe/itsdangerous/Werkzeug break Flask 1.x.
+constraint-dependencies = [
+    "atomicwrites==1.4.0",
+    "attrs==20.3.0",
+    "beautifulsoup4==4.9.3",
+    "click==7.1.2",
+    "colorama==0.4.4",
+    "html5lib==1.1",
+    "iniconfig==1.1.1",
+    "itsdangerous==1.1.0",
+    "jinja2==2.11.3",
+    "markupsafe==1.1.1",
+    "mccabe==0.6.1",
+    "packaging==20.9",
+    "pluggy==0.13.1",
+    "py==1.10.0",
+    "pycodestyle==2.6.0",
+    "pyflakes==2.2.0",
+    "pyparsing==2.4.7",
+    "six==1.15.0",
+    "soupsieve==2.1",
+    "toml==0.10.2",
+    "webencodings==0.5.1",
+    "werkzeug==1.0.1",
+]
